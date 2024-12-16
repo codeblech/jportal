@@ -59,6 +59,12 @@ function AuthenticatedApp({ w, setIsAuthenticated }) {
   const [subjectAttendanceData, setSubjectAttendanceData] = useState({});
   const [selectedSubject, setSelectedSubject] = useState(null);
 
+  // Add new state for marks
+  const [marksSemesters, setMarksSemesters] = useState([]);
+  const [selectedMarksSem, setSelectedMarksSem] = useState(null);
+  const [marksSemesterData, setMarksSemesterData] = useState(null);
+  const [marksData, setMarksData] = useState({}); // Cache for marks data
+
   return (
     <div className="min-h-screen pb-14 select-none">
       <div className="sticky top-0 z-30 bg-[#191c20] -mt-[2px]">
@@ -106,6 +112,14 @@ function AuthenticatedApp({ w, setIsAuthenticated }) {
               setGradeCard={setGradeCard}
               gradeCards={gradeCards}
               setGradeCards={setGradeCards}
+              marksSemesters={marksSemesters}
+              setMarksSemesters={setMarksSemesters}
+              selectedMarksSem={selectedMarksSem}
+              setSelectedMarksSem={setSelectedMarksSem}
+              marksSemesterData={marksSemesterData}
+              setMarksSemesterData={setMarksSemesterData}
+              marksData={marksData}
+              setMarksData={setMarksData}
             />
           }
         />

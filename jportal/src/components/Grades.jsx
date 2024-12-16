@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import MarksCard from "./MarksCard";
 
 export default function Grades({
   w,
@@ -36,12 +37,19 @@ export default function Grades({
   gradeCard,
   setGradeCard,
   gradeCards,
-  setGradeCards
+  setGradeCards,
+  marksSemesters,
+  setMarksSemesters,
+  selectedMarksSem,
+  setSelectedMarksSem,
+  marksData,
+  setMarksData,
+  marksSemesterData,
+  setMarksSemesterData
 }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [gradeCardLoading, setGradeCardLoading] = useState(false);
-  const [marksSemesters, setMarksSemesters] = useState([]);
   const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -154,6 +162,124 @@ export default function Grades({
     }
   };
 
+  const handleMarksSemesterChange = async (value) => {
+    try {
+      const semester = marksSemesters.find(sem => sem.registration_id === value);
+      setSelectedMarksSem(semester);
+
+      // Sample data - in a real app this would come from an API
+      const sampleData = {
+      "student_info": {
+        "name": "YASH MALIK",
+        "enrollment_no": "22103171",
+        "program": "B.T",
+        "branch": "CSE",
+        "semester": "5",
+        "registration_code": "2023EVESEM"
+      },
+      "meta": {
+        "exams": ["ENDTERM-23EVENSEM", "T1-2023 EVEN SEM", "T-2 OF EVEN SEM 2023", "LAB-MID VIVA", "LAB-END VIVA"],
+        "cols": 5,
+        "rows": 9
+      },
+      "courses": [
+        {
+          "code": "15B11CI211",
+          "name": "SOFTWARE DEVELOPMENT FUNDAMENTALS-2",
+          "exams": {
+            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 29.5, "FM": 35.0, "OW": 29.5, "WT": 35.0 },
+            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 12.5, "FM": 20.0, "OW": 12.5, "WT": 20.0 },
+            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 14.5, "FM": 20.0, "OW": 14.5, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B11EC111",
+          "name": "ELECTRICAL SCIENCE-1",
+          "exams": {
+            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 24.0, "FM": 35.0, "OW": 24.0, "WT": 35.0 },
+            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 },
+            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 10.0, "FM": 20.0, "OW": 10.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B11MA211",
+          "name": "MATHEMATICS-2",
+          "exams": {
+            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 9.0, "FM": 35.0, "OW": 9.0, "WT": 35.0 },
+            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 5.0, "FM": 20.0, "OW": 5.0, "WT": 20.0 },
+            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 7.0, "FM": 20.0, "OW": 7.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B11PH211",
+          "name": "PHYSICS-2",
+          "exams": {
+            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 34.0, "FM": 35.0, "OW": 34.0, "WT": 35.0 },
+            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 12.0, "FM": 20.0, "OW": 12.0, "WT": 20.0 },
+            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 15.0, "FM": 20.0, "OW": 15.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B17CI271",
+          "name": "SOFTWARE DEVELOPMENT LAB-2",
+          "exams": {
+            "LAB-MID VIVA": { "remarks": "none", "OM": 19.0, "FM": 20.0, "OW": 19.0, "WT": 20.0 },
+            "LAB-END VIVA": { "remarks": "none", "OM": 17.0, "FM": 20.0, "OW": 17.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B17EC171",
+          "name": "ELECTRICAL SCIENCE LAB -1",
+          "exams": {
+            "LAB-MID VIVA": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 },
+            "LAB-END VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "15B17PH271",
+          "name": "PHYSICS LAB-2",
+          "exams": {
+            "LAB-MID VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 },
+            "LAB-END VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "18B15GE112",
+          "name": "WORKSHOP",
+          "exams": {
+            "LAB-MID VIVA": { "remarks": "none", "OM": 8.0, "FM": 20.0, "OW": 8.0, "WT": 20.0 },
+            "LAB-END VIVA": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 }
+          }
+        },
+        {
+          "code": "22B12HS111",
+          "name": "LIFE SKILLS AND EFFECTIVE COMMUNICATION",
+          "exams": {
+            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 25.0, "FM": 35.0, "OW": 25.0, "WT": 35.0 },
+            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 13.5, "FM": 20.0, "OW": 13.5, "WT": 20.0 },
+            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 }
+          }
+        }
+      ],
+      "legend": { "FM": "FullMarks", "OM": "ObtainedMarks", "OW": "ObtainedWeightage", "WT": "Weightage" }
+    };
+
+      // Check if we already have the data in cache
+      if (marksData[value]) {
+        setMarksSemesterData(marksData[value]);
+      } else {
+        // Use sample data instead of API call
+        setMarksSemesterData(sampleData);
+        setMarksData(prev => ({
+          ...prev,
+          [value]: sampleData
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to load marks:", error);
+    }
+  };
+
   if (loading) {
     return <div className="text-white flex items-center justify-center py-4 h-[calc(100vh-<header_height>-<navbar_height>)]">Loading grades...</div>;
   }
@@ -165,7 +291,7 @@ export default function Grades({
   return (
     <div className="text-white pt-2 pb-4 px-3 font-sans">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#191c20]">
+        <TabsList className="grid w-full grid-cols-3 mb-4 bg-[#191c20]">
           <TabsTrigger
             value="overview"
             className="bg-[#191c20] data-[state=active]:bg-[#1f2937] data-[state=active]:text-white"
@@ -177,6 +303,12 @@ export default function Grades({
             className="bg-[#191c20] data-[state=active]:bg-[#1f2937] data-[state=active]:text-white"
           >
             Semester
+          </TabsTrigger>
+          <TabsTrigger
+            value="marks"
+            className="bg-[#191c20] data-[state=active]:bg-[#1f2937] data-[state=active]:text-white"
+          >
+            Marks
           </TabsTrigger>
         </TabsList>
 
@@ -295,6 +427,31 @@ export default function Grades({
                     subject={subject}
                     getGradeColor={getGradeColor}
                   />
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="marks">
+          <div className="w-full max-w-4xl mx-auto">
+            <Select onValueChange={handleMarksSemesterChange} value={selectedMarksSem?.registration_id}>
+              <SelectTrigger className="bg-[#191c20] text-white border-white">
+                <SelectValue placeholder="Select semester" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#191c20] text-white border-white">
+                {marksSemesters.map((sem) => (
+                  <SelectItem key={sem.registration_id} value={sem.registration_id}>
+                    {sem.registration_code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {marksSemesterData && (
+              <div className="space-y-4 mt-4">
+                {marksSemesterData.courses.map((course) => (
+                  <MarksCard key={course.code} course={course} />
                 ))}
               </div>
             )}
