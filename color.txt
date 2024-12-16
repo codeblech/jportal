@@ -1,0 +1,67 @@
+these are all the colors currently used in the app. this can be used as reference when creating (or using) a theming engine
+
+App.jsx
+#191c20 (background color for main container and loading screen)
+text-red-500 (error message color)
+text-white (text color for loading screen)
+
+Attendance.jsx
+#191c20 (background color for sticky header and select elements)
+text-white (text color for select elements and input)
+
+AttendanceCard.jsx
+#191c20 (background color for sheet content)
+text-gray-500 (text color for head_cell in calendar)
+text-gray-400 (text color for class data)
+text-white (text color for subject name and calendar)
+rgba(22, 163, 72, 0.4) (background color for present days in calendar)
+rgba(220, 38, 38, 0.4) (background color for absent days in calendar)
+
+CircleProgress.jsx
+#a3c9fe (stroke color for circle)
+fill-white (text color)
+
+Exams.jsx
+#191c20 (background color for SelectTrigger and SelectContent)
+text-white (text color for SelectTrigger and SelectContent)
+border-white (border color for SelectTrigger and SelectContent)
+
+Grades.jsx
+#191c20 (background color for tabs and select trigger)
+#1f2937 (background color for active tab trigger)
+#374151 (stroke color for CartesianGrid and tooltip background)
+#9CA3AF (stroke color for XAxis and YAxis)
+#4ADE80 (stroke color for SGPA line and dot)
+#60A5FA (stroke color for CGPA line and dot)
+text-white (text color for loading, error, and select trigger)
+text-green-400 (text color for SGPA value)
+text-blue-400 (text color for CGPA value)
+text-gray-400 (text color for semester details and labels)
+border-gray-700 (border color for semester details)
+border-white (border color for select trigger and content)
+
+GradeCard.jsx
+border-gray-700 (border color for card)
+text-gray-400 (text color for grade and credits labels)
+text-blue-400 (text color for course credit points)
+
+Navbar.jsx
+#242a32 (background color for navbar)
+text-white (text color for navbar items)
+hover:bg-gray-700 (hover background color for navbar items)
+
+Profile.jsx
+#191c20 (background color for sections)
+text-white (text color for text)
+border-white/10 (border color for sections)
+text-gray-400 (text color for labels)
+text-blue-400 (link color)
+
+SubjectInfoCard.jsx
+border-gray-700 (border color for card)
+text-gray-400 (text color for labels)
+
+Subjects.jsx
+#191c20 (background color for SelectTrigger and SelectContent)
+text-white (text color for text)
+border-white (border color for SelectTrigger and SelectContent)
