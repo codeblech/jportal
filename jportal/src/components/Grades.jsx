@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import MarksCard from "./MarksCard";
+import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.16/dist/jsjiit.esm.js";
 
 export default function Grades({
   w,
@@ -167,114 +168,78 @@ export default function Grades({
       const semester = marksSemesters.find(sem => sem.registration_id === value);
       setSelectedMarksSem(semester);
 
-      // Sample data - in a real app this would come from an API
-      const sampleData = {
-      "student_info": {
-        "name": "YASH MALIK",
-        "enrollment_no": "22103171",
-        "program": "B.T",
-        "branch": "CSE",
-        "semester": "5",
-        "registration_code": "2023EVESEM"
-      },
-      "meta": {
-        "exams": ["ENDTERM-23EVENSEM", "T1-2023 EVEN SEM", "T-2 OF EVEN SEM 2023", "LAB-MID VIVA", "LAB-END VIVA"],
-        "cols": 5,
-        "rows": 9
-      },
-      "courses": [
-        {
-          "code": "15B11CI211",
-          "name": "SOFTWARE DEVELOPMENT FUNDAMENTALS-2",
-          "exams": {
-            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 29.5, "FM": 35.0, "OW": 29.5, "WT": 35.0 },
-            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 12.5, "FM": 20.0, "OW": 12.5, "WT": 20.0 },
-            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 14.5, "FM": 20.0, "OW": 14.5, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B11EC111",
-          "name": "ELECTRICAL SCIENCE-1",
-          "exams": {
-            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 24.0, "FM": 35.0, "OW": 24.0, "WT": 35.0 },
-            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 },
-            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 10.0, "FM": 20.0, "OW": 10.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B11MA211",
-          "name": "MATHEMATICS-2",
-          "exams": {
-            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 9.0, "FM": 35.0, "OW": 9.0, "WT": 35.0 },
-            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 5.0, "FM": 20.0, "OW": 5.0, "WT": 20.0 },
-            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 7.0, "FM": 20.0, "OW": 7.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B11PH211",
-          "name": "PHYSICS-2",
-          "exams": {
-            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 34.0, "FM": 35.0, "OW": 34.0, "WT": 35.0 },
-            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 12.0, "FM": 20.0, "OW": 12.0, "WT": 20.0 },
-            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 15.0, "FM": 20.0, "OW": 15.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B17CI271",
-          "name": "SOFTWARE DEVELOPMENT LAB-2",
-          "exams": {
-            "LAB-MID VIVA": { "remarks": "none", "OM": 19.0, "FM": 20.0, "OW": 19.0, "WT": 20.0 },
-            "LAB-END VIVA": { "remarks": "none", "OM": 17.0, "FM": 20.0, "OW": 17.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B17EC171",
-          "name": "ELECTRICAL SCIENCE LAB -1",
-          "exams": {
-            "LAB-MID VIVA": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 },
-            "LAB-END VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "15B17PH271",
-          "name": "PHYSICS LAB-2",
-          "exams": {
-            "LAB-MID VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 },
-            "LAB-END VIVA": { "remarks": "none", "OM": 14.0, "FM": 20.0, "OW": 14.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "18B15GE112",
-          "name": "WORKSHOP",
-          "exams": {
-            "LAB-MID VIVA": { "remarks": "none", "OM": 8.0, "FM": 20.0, "OW": 8.0, "WT": 20.0 },
-            "LAB-END VIVA": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 }
-          }
-        },
-        {
-          "code": "22B12HS111",
-          "name": "LIFE SKILLS AND EFFECTIVE COMMUNICATION",
-          "exams": {
-            "ENDTERM-23EVENSEM": { "remarks": "none", "OM": 25.0, "FM": 35.0, "OW": 25.0, "WT": 35.0 },
-            "T1-2023 EVEN SEM": { "remarks": "none", "OM": 13.5, "FM": 20.0, "OW": 13.5, "WT": 20.0 },
-            "T-2 OF EVEN SEM 2023": { "remarks": "none", "OM": 16.0, "FM": 20.0, "OW": 16.0, "WT": 20.0 }
-          }
-        }
-      ],
-      "legend": { "FM": "FullMarks", "OM": "ObtainedMarks", "OW": "ObtainedWeightage", "WT": "Weightage" }
-    };
-
       // Check if we already have the data in cache
       if (marksData[value]) {
         setMarksSemesterData(marksData[value]);
-      } else {
-        // Use sample data instead of API call
-        setMarksSemesterData(sampleData);
-        setMarksData(prev => ({
-          ...prev,
-          [value]: sampleData
-        }));
+        return;
       }
+
+      // Construct the endpoint
+      const ENDPOINT = `/studentsexamview/printstudent-exammarks/${w.session.memberid}/${w.session.instituteid}/${semester.registration_id}/${semester.registration_code}`;
+
+      // Generate local name and get headers
+      const localname = await generate_local_name();
+      const headers = await w.session.get_headers(localname);
+
+      // Load required packages and process PDF
+      const pyodide = await loadPyodide();
+
+      // Set JavaScript variables in Python's namespace
+      pyodide.globals.set('ENDPOINT', ENDPOINT);
+      pyodide.globals.set('fetchOptions', { method: 'GET', headers });
+      pyodide.globals.set('API', API);
+
+      // Run Python code to process gradesthe PDF
+      const res = await pyodide.runPythonAsync(`
+        import pyodide_js
+        import asyncio
+        import pyodide.http
+
+        marks = {}
+
+        async def process_pdf():
+            global marks
+            # Load required packages
+            await pyodide_js.loadPackage("/jportal/artifact/PyMuPDF-1.24.12-cp311-abi3-emscripten_3_1_32_wasm32.whl")
+            await pyodide_js.loadPackage("/jportal/artifact/jiit_marks-0.2.0-py3-none-any.whl")
+
+            # Import required modules
+            import pymupdf
+            from jiit_marks import parse_report
+
+            # Fetch and process PDF
+            print("Fetching PDF")
+            r = await pyodide.http.pyfetch(API+ENDPOINT, **(fetchOptions.to_py()))
+            print("Fetched PDF")
+            data = await r.bytes()
+
+            print("Preparing Doc")
+            doc = pymupdf.Document(stream=data)
+            print("Extracting marks")
+            marks = parse_report(doc)
+            print(marks)
+            return marks
+
+        await process_pdf()
+      `);
+      console.log("helo")
+      console.log(res)
+      console.log("helo2")
+      const result = res.toJs();
+      console.log(result);
+      console.log("aaa")
+      console.log(typeof(result))
+      console.log("bbb")
+      console.log(marksSemesterData)
+
+      // Update state with the fetched data
+      setMarksSemesterData(result);
+      console.log(marksSemesterData)
+      setMarksData(prev => ({
+        ...prev,
+        [value]: result
+      }));
+
     } catch (error) {
       console.error("Failed to load marks:", error);
     }
@@ -448,11 +413,15 @@ export default function Grades({
               </SelectContent>
             </Select>
 
-            {marksSemesterData && (
+            {marksSemesterData && marksSemesterData.courses ? (
               <div className="space-y-4 mt-4">
                 {marksSemesterData.courses.map((course) => (
                   <MarksCard key={course.code} course={course} />
                 ))}
+              </div>
+            ) : (
+              <div className="text-center mt-4 text-gray-400">
+                Select a semester to view marks
               </div>
             )}
           </div>
