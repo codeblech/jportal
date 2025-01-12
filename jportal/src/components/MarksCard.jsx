@@ -10,10 +10,10 @@ export default function MarksCard({ course }) {
   };
 
   return (
-    <div className="bg-[#191c20] rounded-lg p-3 sm:p-4 border border-gray-700">
+    <div className="bg-[#191c20] dark:bg-white rounded-lg p-3 sm:p-4 border border-gray-700 dark:border-gray-300">
       <div className="space-y-1 mb-3 sm:mb-4">
-        <h3 className="font-bold text-sm sm:text-base">{course.name}</h3>
-        <p className="text-xs sm:text-sm text-gray-400">{course.code}</p>
+        <h3 className="font-bold text-sm sm:text-base dark:text-black">{course.name}</h3>
+        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-600">{course.code}</p>
       </div>
 
       <div className="space-y-2 sm:space-y-3">
@@ -29,7 +29,7 @@ export default function MarksCard({ course }) {
                     indicatorClassName={getProgressColor(percentage)}
                   />
                 </div>
-                <span className="text-xs sm:text-sm text-gray-400 min-w-[50px] sm:min-w-[60px] text-right">
+                <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-600 min-w-[50px] sm:min-w-[60px] text-right">
                   {marks.OM}/{marks.FM}
                 </span>
               </div>

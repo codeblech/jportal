@@ -185,19 +185,19 @@ const Attendance = ({
   };
 
   return (
-    <div className="text-white font-sans">
-      <div className="sticky top-14 bg-[#191c20] z-20">
+    <div className="text-white dark:text-black font-sans">
+      <div className="sticky top-14 bg-[#191c20] dark:bg-white z-20">
         <div className="flex gap-2 py-2 px-3">
           <Select
             onValueChange={handleSemesterChange}
             value={selectedSem?.registration_id}
           >
-            <SelectTrigger className="bg-[#191c20] text-white border-white">
+            <SelectTrigger className="bg-[#191c20] dark:bg-[#f9f9f9] text-white dark:text-black border-white dark:border-black">
               <SelectValue placeholder={isAttendanceMetaLoading ? "Loading semesters..." : "Select semester"}>
                 {selectedSem?.registration_code}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-[#191c20] text-white border-white">
+            <SelectContent className="bg-[#191c20] dark:bg-[#f9f9f9] text-white dark:text-black border-white dark:border-black">
               {semestersData?.semesters?.map((sem) => (
                 <SelectItem key={sem.registration_id} value={sem.registration_id}>
                   {sem.registration_code}
@@ -211,7 +211,7 @@ const Attendance = ({
             onChange={handleGoalChange}
             min="-1"
             max="100"
-            className="w-32 bg-[#191c20] text-white border-white"
+            className="w-32 bg-[#191c20] dark:bg-[#f9f9f9] text-white dark:text-black border-white dark:border-black"
             placeholder="Goal %"
           />
         </div>

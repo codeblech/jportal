@@ -80,19 +80,19 @@ export default function Exams({
   }
 
   return (
-    <div className="text-white font-sans">
-      <div className="sticky top-14 bg-[#191c20] z-20">
+    <div className="text-white dark:text-black font-sans">
+      <div className="sticky top-14 bg-[#191c20] dark:bg-white z-20">
         <div className="pt-2 pb-4 px-3">
           <Select 
             onValueChange={handleSemesterChange}
             value={selectedExamSem?.registration_id || ""}
           >
-            <SelectTrigger className="bg-[#191c20] text-white border-white">
+            <SelectTrigger className="bg-[#191c20] dark:bg-white text-white dark:text-black border-white dark:border-black">
               <SelectValue placeholder="Select semester">
                 {selectedExamSem?.registration_code || "Select semester"}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-[#191c20] text-white border-white">
+            <SelectContent className="bg-[#191c20] dark:bg-white text-white dark:text-black border-white dark:border-black">
               {examSemesters.map((sem) => (
                 <SelectItem key={sem.registration_id} value={sem.registration_id}>
                   {sem.registration_code}
@@ -107,12 +107,12 @@ export default function Exams({
                 onValueChange={handleEventChange}
                 value={selectedExamEvent?.exam_event_id || ""}
               >
-                <SelectTrigger className="bg-[#191c20] text-white border-white">
+                <SelectTrigger className="bg-[#191c20] dark:bg-white text-white dark:text-black border-white dark:border-black">
                   <SelectValue placeholder="Select exam event">
                     {selectedExamEvent?.exam_event_desc || "Select exam event"}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="bg-[#191c20] text-white border-white">
+                <SelectContent className="bg-[#191c20] dark:bg-white text-white dark:text-black border-white dark:border-black">
                   {examEvents.map((event) => (
                     <SelectItem key={event.exam_event_id} value={event.exam_event_id}>
                       {event.exam_event_desc}
@@ -133,9 +133,6 @@ export default function Exams({
         ) : currentSchedule?.length > 0 ? (
           <div className="space-y-2 divide-y divide-muted">
             {currentSchedule.map((exam) => {
-              // Temporarily add test data
-              
-              
               return (
                 <div 
                   key={`${exam.subjectcode}-${exam.datetime}-${exam.datetimefrom}`} 
@@ -146,7 +143,7 @@ export default function Exams({
                       <h3 className="font-medium">
                         {exam.subjectdesc.split('(')[0].trim()}
                       </h3>
-                      <p className="text-sm text-gray-400">{exam.subjectcode}</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-600">{exam.subjectcode}</p>
                     </div>
                     {(exam.roomcode || exam.seatno) && (
                       <div className="text-2xl font-medium whitespace-nowrap">
@@ -156,7 +153,7 @@ export default function Exams({
                       </div>
                     )}
                   </div>
-                  <div className="mt-2 text-sm text-white">
+                  <div className="mt-2 text-sm text-white dark:text-black">
                     <p>{formatDate(exam.datetime)}</p>
                     <p>{exam.datetimeupto}</p>
                   </div>
