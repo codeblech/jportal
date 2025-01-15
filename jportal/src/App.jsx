@@ -9,6 +9,7 @@ import Exams from './components/Exams'
 import Subjects from './components/Subjects'
 import Profile from './components/Profile'
 import './App.css'
+import { ThemeProvider } from './context/ThemeContext'
 
 import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.20/dist/jsjiit.esm.js";
 
@@ -217,6 +218,20 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [themeMode, setThemeMode] = useState('light')
+  const darkTheme = ()=>
+  {
+    setThemeMode('dark')
+  }
+  const lightTheme = ()=>
+  {
+    setThemeMode('light')
+  }
+  useEffect(() => {
+    document.querySelector('html')?.classList.remove('dark','light')
+    document.querySelector('html')?.classList.add(themeMode)
+  }
+  , [themeMode])
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -258,25 +273,27 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-[#191c20] select-none">
-        {!isAuthenticated || !w.session ? (
-          <Routes>
-            <Route path="*" element={
-              <>
-                {error && <div className="text-red-500 text-center pt-4">{error}</div>}
-                <LoginWrapper
-                  onLoginSuccess={() => setIsAuthenticated(true)}
-                  w={w}
-                />
-              </>
-            } />
-          </Routes>
-        ) : (
-          <AuthenticatedApp w={w} setIsAuthenticated={setIsAuthenticated} />
-        )}
-      </div>
-    </Router>
+    <ThemeProvider value={{themeMode, darkTheme, lightTheme}}>
+      <Router>
+        <div className="min-h-screen bg-[#191c20] dark:bg-white dark:text-black select-none">
+          {!isAuthenticated || !w.session ? (
+            <Routes>
+              <Route path="*" element={
+                <>
+                  {error && <div className="text-red-500 dark:text-red-500 text-center pt-4">{error}</div>}
+                  <LoginWrapper
+                    onLoginSuccess={() => setIsAuthenticated(true)}
+                    w={w}
+                  />
+                </>
+              } />
+            </Routes>
+          ) : (
+            <AuthenticatedApp w={w} setIsAuthenticated={setIsAuthenticated} />
+          )}
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

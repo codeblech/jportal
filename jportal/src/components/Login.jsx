@@ -102,11 +102,10 @@ export default function Login({ onLoginSuccess, w }) {
       error: null
     }));
   }
-
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-6 p-6">
-        <div className="space-y-2 text-center text-white">
+    <div className="flex min-h-screen items-center justify-center dark:bg-gray-100 bg-gray-900">
+      <div className="w-full max-w-md space-y-6 p-6 dark:bg-white bg-gray-800">
+        <div className="space-y-2 text-center dark:text-gray-900 text-white">
           <h1 className="text-2xl font-bold">Login</h1>
           <p>Enter your credentials to sign in</p>
           {loginStatus.error && (
@@ -121,9 +120,9 @@ export default function Login({ onLoginSuccess, w }) {
               name="enrollmentNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Enrollment Number</FormLabel>
+                  <FormLabel className="dark:text-gray-900 text-white">Enrollment Number</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="dark:bg-white bg-gray-700 dark:text-gray-900 text-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,19 +133,18 @@ export default function Login({ onLoginSuccess, w }) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Password</FormLabel>
+                  <FormLabel className="dark:text-gray-900 text-white">Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} className="dark:bg-white bg-gray-700 dark:text-gray-900 text-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div></div><div></div>
             <Button
               type="submit"
               variant="outline"
-              className="w-full bg-white text-[#191c20]"
+              className="w-full dark:bg-gray-900 dark:text-white bg-white text-[#191c20]"
               disabled={loginStatus.isLoading}
             >
               {loginStatus.isLoading ? "Signing in..." : "Sign in"}

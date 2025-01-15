@@ -72,33 +72,32 @@ const AttendanceCard = ({
       a => a.datetime.startsWith(formattedDateStr)
     );
   };
-
   return (
     <>
       <div
-        className="flex justify-between items-center py-1 border-b border-gray-700 cursor-pointer hover:bg-gray-800/50"
+        className="flex justify-between items-center py-1 border-b border-gray-700 cursor-pointer hover:bg-gray-800/50 dark:border-gray-300 dark:hover:bg-gray-200/50"
         onClick={handleClick}
       >
         <div className="flex-1 mr-4">
-          <h2 className="text-sm font-semibold max-[390px]:text-xs ">{displayName}</h2>
-          {lecture !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs">Lecture: {lecture}%</p>}
-          {tutorial !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
-          {practical !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
+          <h2 className="text-sm font-semibold max-[390px]:text-xs dark:text-black">{displayName}</h2>
+          {lecture !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs dark:text-black">Lecture: {lecture}%</p>}
+          {tutorial !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs dark:text-black">Tutorial: {tutorial}%</p>}
+          {practical !== '' && <p className="text-sm lg:text-base max-[390px]:text-xs dark:text-black">Practical: {practical}%</p>}
         </div>
         <div className="flex items-center gap-2">
           <div className="text-center">
-            <div className="text-sm">{attendance.attended}</div>
-            <div className="h-px w-full bg-gray-700"></div>
-            <div className="text-sm">{attendance.total}</div>
+            <div className="text-sm dark:text-black">{attendance.attended}</div>
+            <div className="h-px w-full bg-gray-700 dark:bg-gray-300"></div>
+            <div className="text-sm dark:text-black">{attendance.total}</div>
           </div>
           <div className="flex flex-col items-center">
             <CircleProgress key={Date.now()} percentage={attendancePercentage} />
             {classesNeeded > 0 ? (
-              <div className="text-xs mt-1 text-gray-400">
+              <div className="text-xs mt-1 text-gray-400 dark:text-gray-600">
                 Attend {classesNeeded}
               </div>
             ) : classesCanMiss > 0 && (
-              <div className="text-xs mt-1 text-gray-400">
+              <div className="text-xs mt-1 text-gray-400 dark:text-gray-600">
                 Can miss {classesCanMiss}
               </div>
             )}
@@ -110,9 +109,9 @@ const AttendanceCard = ({
         setSelectedSubject(null);
         setSelectedDate(null);
       }}>
-        <SheetContent side="bottom" className="h-[70vh] bg-[#191c20] text-white border-0 overflow-hidden flex flex-col">
+        <SheetContent side="bottom" className="h-[70vh] bg-[#191c20] text-white border-0 overflow-hidden flex flex-col dark:bg-white dark:text-black">
           <SheetHeader>
-            {/* <SheetTitle className="text-white">{}</SheetTitle> */}
+            {/* <SheetTitle className="text-white dark:text-black">{}</SheetTitle> */}
           </SheetHeader>
           <div className="py-4 flex flex-col items-center flex-1 overflow-y-auto">
             <div className="w-full max-w-[320px] flex flex-col">
@@ -207,7 +206,7 @@ const AttendanceCard = ({
                 }}
                 selected={selectedDate}
                 onSelect={(date) => setSelectedDate(date)}
-                className={`pb-2 text-white ${isLoading ? 'animate-pulse' : ''} w-full flex-shrink-0 max-w-full`}
+                className={`pb-2 text-white dark:text-black ${isLoading ? 'animate-pulse' : ''} w-full flex-shrink-0 max-w-full`}
                 classNames={{
                   months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                   month: "space-y-4 w-full",
@@ -240,18 +239,18 @@ const AttendanceCard = ({
                       key={index}
                       className={`p-2 rounded ${
                         classData.present === "Present"
-                          ? "bg-green-600/40"
-                          : "bg-red-600/40"
+                          ? "bg-green-600/40 dark:bg-green-200/40"
+                          : "bg-red-600/40 dark:bg-red-200/40"
                       }`}
                     >
-                      <p className="text-sm">
+                      <p className="text-sm dark:text-black">
                         {classData.attendanceby}
                       </p>
 
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-gray-600">
                       {classData.classtype} - {classData.present}
                         </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-400 dark:text-gray-600">
                         {classData.datetime}
                       </p>
                     </div>
