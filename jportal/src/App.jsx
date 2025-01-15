@@ -218,7 +218,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [themeMode, setThemeMode] = useState('dark')
+  const [themeMode, setThemeMode] = useState('light')
   const darkTheme = ()=>
   {
     setThemeMode('dark')
