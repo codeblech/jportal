@@ -32,7 +32,7 @@ function CircleProgress({ percentage, label, className = "" }) {
           cy="25"
           r={radius}
           fill="transparent"
-          stroke="#a3c9fe"
+          stroke="var(--accent-color)"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -45,7 +45,8 @@ function CircleProgress({ percentage, label, className = "" }) {
         y="50%"
         dominantBaseline="middle"
         textAnchor="middle"
-        className="text-[13px] max-[375px]:text-[12px] fill-white font-medium"
+        className="text-[13px] max-[375px]:text-[12px] font-medium"
+        fill="var(--accent-color)"
       >
         {label ?? percentage}
       </text>

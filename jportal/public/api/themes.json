@@ -1,0 +1,10 @@
+{
+  "themes": [
+    {
+      "filename": "taf-jportal-themes.config",
+      "author": "taf",
+      "isMultiTheme": true,
+      "url": "/jportal/user-configs/taf-jportal-themes.config"
+    }
+  ]
+}
