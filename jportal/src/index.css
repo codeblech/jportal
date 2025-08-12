@@ -99,3 +99,58 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Custom slider styles for theme switcher */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-track {
+  background: var(--card-bg);
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--accent-color);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.slider::-moz-range-track {
+  background: var(--card-bg);
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.slider::-moz-range-thumb {
+  background: var(--accent-color);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}

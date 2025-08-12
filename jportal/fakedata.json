@@ -1,0 +1,730 @@
+{
+  "attendance": {
+    "semestersData": {
+      "semesters": [
+        {
+          "registration_id": "2025EVESVEM",
+          "registration_code": "2025EVESVEM"
+        },
+        { "registration_id": "2025ODD", "registration_code": "2025ODD" }
+      ],
+      "latest_header": "header2025EVESVEM",
+      "latest_semester": {
+        "registration_id": "2025EVESVEM",
+        "registration_code": "2025EVESVEM"
+      }
+    },
+    "attendanceData": {
+      "2025EVESVEM": {
+        "studentattendancelist": [
+          {
+            "subjectdesc": "15B11EC611",
+            "subjectcode": "TELECOMMUNICATION NETWORKS",
+            "Ltotalclass": 36,
+            "Ltotalpres": 28,
+            "Lpercentage": 77.8,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 77.8
+          },
+          {
+            "subjectdesc": "15B17EC671",
+            "subjectcode": "TELECOMMUNICATION NETWORKS LAB",
+            "Ltotalclass": 0,
+            "Ltotalpres": 0,
+            "Lpercentage": 0,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 12,
+            "Ptotalpres": 10,
+            "Ppercentage": 83.3,
+            "LTpercantage": 83.3
+          },
+          {
+            "subjectdesc": "15B19EC691",
+            "subjectcode": "MINOR PROJECT-2",
+            "Ltotalclass": 0,
+            "Ltotalpres": 0,
+            "Lpercentage": 0,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 100
+          },
+          {
+            "subjectdesc": "17B11EC731",
+            "subjectcode": "MOBILE COMMUNICATION",
+            "Ltotalclass": 39,
+            "Ltotalpres": 28,
+            "Lpercentage": 71.8,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 71.8
+          },
+          {
+            "subjectdesc": "20B12HS311",
+            "subjectcode": "GLOBAL POLITICS",
+            "Ltotalclass": 39,
+            "Ltotalpres": 27,
+            "Lpercentage": 66.7,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 69.2,
+            "Ttotalclass": 8,
+            "Ttotalpres": 6,
+            "Tpercentage": 75
+          },
+          {
+            "subjectdesc": "18B11EC315",
+            "subjectcode": "VLSI Design",
+            "Ltotalclass": 48,
+            "Ltotalpres": 34,
+            "Lpercentage": 78.4,
+            "Ttotalclass": 11,
+            "Ttotalpres": 5,
+            "Tpercentage": 45.5,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 70.8
+          },
+          {
+            "subjectdesc": "18B15EC315",
+            "subjectcode": "VLSI Design Lab-II",
+            "Ltotalclass": 0,
+            "Ltotalpres": 0,
+            "Lpercentage": 0,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 13,
+            "Ptotalpres": 10,
+            "Ppercentage": 76.9,
+            "LTpercantage": 76.9
+          },
+          {
+            "subjectdesc": "24B16HS311",
+            "subjectcode": "Basics of Creative Writing",
+            "Ltotalclass": 26,
+            "Ltotalpres": 20,
+            "Lpercentage": 76.9,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 76.9
+          },
+          {
+            "subjectdesc": "24B12EC411",
+            "subjectcode": "Fundamentals of Electric Vehicle",
+            "Ltotalclass": 40,
+            "Ltotalpres": 27,
+            "Lpercentage": 67.5,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 67.5
+          },
+          {
+            "subjectdesc": "24B12HS316",
+            "subjectcode": "Popular Literature",
+            "Ltotalclass": 40,
+            "Ltotalpres": 29,
+            "Lpercentage": 72.5,
+            "Ttotalclass": 0,
+            "Ttotalpres": 0,
+            "Tpercentage": 0,
+            "Ptotalclass": 0,
+            "Ptotalpres": 0,
+            "Ppercentage": 0,
+            "LTpercantage": 72.5
+          }
+        ]
+      }
+    },
+    "subjectAttendanceData": {
+      "15B11EC611": [
+        {
+          "datetime": "01/09/2023 09:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "PANKAJ KUMAR YADAV"
+        },
+        {
+          "datetime": "02/09/2023 09:00",
+          "classtype": "Lecture",
+          "present": "Absent",
+          "attendanceby": "PANKAJ KUMAR YADAV"
+        },
+        {
+          "datetime": "03/09/2023 09:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "PANKAJ KUMAR YADAV"
+        }
+      ],
+      "15B17EC671": [
+        {
+          "datetime": "01/09/2023 11:00",
+          "classtype": "Practical",
+          "present": "Present",
+          "attendanceby": "PANKAJ KUMAR YADAV"
+        },
+        {
+          "datetime": "08/09/2023 11:00",
+          "classtype": "Practical",
+          "present": "Present",
+          "attendanceby": "PANKAJ KUMAR YADAV"
+        }
+      ],
+      "15B19EC691": [
+        {
+          "datetime": "05/09/2023 10:00",
+          "classtype": "Practical",
+          "present": "Present",
+          "attendanceby": "VISHAL NARAIN SAXENA"
+        }
+      ],
+      "17B11EC731": [
+        {
+          "datetime": "01/09/2023 12:00",
+          "classtype": "Lecture",
+          "present": "Absent",
+          "attendanceby": "SAMRITI KALIA"
+        },
+        {
+          "datetime": "03/09/2023 12:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "SAMRITI KALIA"
+        }
+      ],
+      "18B11EC315": [
+        {
+          "datetime": "01/09/2023 14:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "SAURABH CHATURVEDI"
+        },
+        {
+          "datetime": "02/09/2023 14:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "SAURABH CHATURVEDI"
+        }
+      ],
+      "18B15EC315": [
+        {
+          "datetime": "04/09/2023 15:00",
+          "classtype": "Practical",
+          "present": "Absent",
+          "attendanceby": "SAURABH CHATURVEDI"
+        }
+      ],
+      "20B12HS311": [
+        {
+          "datetime": "01/09/2023 16:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "ILA JOSHI"
+        },
+        {
+          "datetime": "02/09/2023 16:00",
+          "classtype": "Tutorial",
+          "present": "Present",
+          "attendanceby": "ILA JOSHI"
+        }
+      ],
+      "24B12EC411": [
+        {
+          "datetime": "01/09/2023 17:00",
+          "classtype": "Lecture",
+          "present": "Absent",
+          "attendanceby": "RUBY BENIWAL"
+        }
+      ],
+      "24B12HS316": [
+        {
+          "datetime": "01/09/2023 18:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "MOHUA DUTTA"
+        }
+      ],
+      "24B16HS311": [
+        {
+          "datetime": "01/09/2023 19:00",
+          "classtype": "Lecture",
+          "present": "Present",
+          "attendanceby": "HARLEEN KAUR"
+        },
+        {
+          "datetime": "08/09/2023 19:00",
+          "classtype": "Lecture",
+          "present": "Absent",
+          "attendanceby": "HARLEEN KAUR"
+        }
+      ]
+    }
+  },
+  "grades": {
+    "gradesData": {
+      "semesterList": [
+        {
+          "stynumber": 1,
+          "sgpa": 8.5,
+          "cgpa": 8.5,
+          "earnedgradepoints": 170,
+          "totalcoursecredit": 20
+        },
+        {
+          "stynumber": 2,
+          "sgpa": 9.0,
+          "cgpa": 8.75,
+          "earnedgradepoints": 180,
+          "totalcoursecredit": 20
+        },
+        {
+          "stynumber": 3,
+          "sgpa": 6,
+          "cgpa": 8.5,
+          "earnedgradepoints": 170,
+          "totalcoursecredit": 20
+        },
+        {
+          "stynumber": 4,
+          "sgpa": 7.3,
+          "cgpa": 8.75,
+          "earnedgradepoints": 180,
+          "totalcoursecredit": 20
+        },
+        {
+          "stynumber": 5,
+          "sgpa": 8.5,
+          "cgpa": 8.5,
+          "earnedgradepoints": 170,
+          "totalcoursecredit": 20
+        },
+        {
+          "stynumber": 6,
+          "sgpa": 6.9,
+          "cgpa": 8.75,
+          "earnedgradepoints": 180,
+          "totalcoursecredit": 20
+        }
+      ]
+    },
+    "gradeCardSemesters": [
+      { "registration_id": "2025EVESVEM", "registration_code": "2025EVESVEM" },
+      { "registration_id": "2025ODD", "registration_code": "2025ODD" }
+    ],
+    "gradeCards": {
+      "2025EVESVEM": {
+        "gradecard": [
+          {
+            "subjectcode": "15B11EC611",
+            "subjectdesc": "TELECOMMUNICATION NETWORKS",
+            "coursecreditpoint": 3,
+            "grade": "B+"
+          },
+          {
+            "subjectcode": "15B17EC671",
+            "subjectdesc": "TELECOMMUNICATION NETWORKS LAB",
+            "coursecreditpoint": 1,
+            "grade": "C+"
+          },
+          {
+            "subjectcode": "15B19EC691",
+            "subjectdesc": "MINOR PROJECT-2",
+            "coursecreditpoint": 2,
+            "grade": "B+"
+          },
+          {
+            "subjectcode": "17B11EC731",
+            "subjectdesc": "MOBILE COMMUNICATION",
+            "coursecreditpoint": 3,
+            "grade": "B"
+          },
+          {
+            "subjectcode": "18B11EC315",
+            "subjectdesc": "VLSI Design",
+            "coursecreditpoint": 4,
+            "grade": "B"
+          },
+          {
+            "subjectcode": "18B15EC315",
+            "subjectdesc": "VLSI Design Lab-II",
+            "coursecreditpoint": 1,
+            "grade": "C+"
+          },
+          {
+            "subjectcode": "20B12HS311",
+            "subjectdesc": "GLOBAL POLITICS",
+            "coursecreditpoint": 3,
+            "grade": "A+"
+          },
+          {
+            "subjectcode": "24B12EC411",
+            "subjectdesc": "Fundamentals of Electric Vehicle",
+            "coursecreditpoint": 3,
+            "grade": "B+"
+          },
+          {
+            "subjectcode": "24B12HS316",
+            "subjectdesc": "Popular Literature",
+            "coursecreditpoint": 3,
+            "grade": "B"
+          },
+          {
+            "subjectcode": "24B16HS311",
+            "subjectdesc": "Basics of Creative Writing",
+            "coursecreditpoint": 2,
+            "grade": "B"
+          }
+        ]
+      }
+    },
+    "marksSemesters": [
+      { "registration_id": "2025EVESVEM", "registration_code": "2025EVESVEM" },
+      { "registration_id": "2025ODD", "registration_code": "2025ODD" }
+    ],
+    "marksData": {
+      "2025EVESVEM": {
+        "courses": [
+          {
+            "code": "15B11EC611",
+            "name": "TELECOMMUNICATION NETWORKS",
+            "marks": 48,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 10, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 19, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 19, "max": 35 }
+            ]
+          },
+          {
+            "code": "15B17EC671",
+            "name": "TELECOMMUNICATION NETWORKS LAB",
+            "marks": 22,
+            "max_marks": 40,
+            "breakup": [
+              { "label": "END VVIA-LAB-25EVEN", "marks": 12, "max": 20 },
+              { "label": "MID VIVA-LAB 25 EVEN", "marks": 10, "max": 20 }
+            ]
+          },
+          {
+            "code": "15B19EC691",
+            "name": "MINOR PROJECT-2",
+            "marks": 30,
+            "max_marks": 40,
+            "breakup": [
+              { "label": "END VVIA-LAB-25EVEN", "marks": 16, "max": 20 },
+              { "label": "MID VIVA-LAB 25 EVEN", "marks": 14, "max": 20 }
+            ]
+          },
+          {
+            "code": "17B11EC731",
+            "name": "MOBILE COMMUNICATION",
+            "marks": 44,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 15, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 12.5, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 16.5, "max": 35 }
+            ]
+          },
+          {
+            "code": "18B11EC315",
+            "name": "VLSI Design",
+            "marks": 35,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 8.5, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 10.5, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 16, "max": 35 }
+            ]
+          },
+          {
+            "code": "18B15EC315",
+            "name": "VLSI Design Lab-II",
+            "marks": 18,
+            "max_marks": 40,
+            "breakup": [
+              { "label": "END VVIA-LAB-25EVEN", "marks": 10, "max": 20 },
+              { "label": "MID VIVA-LAB 25 EVEN", "marks": 8, "max": 20 }
+            ]
+          },
+          {
+            "code": "20B12HS311",
+            "name": "GLOBAL POLITICS",
+            "marks": 60.5,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 16, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 17, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 27.5, "max": 35 }
+            ]
+          },
+          {
+            "code": "24B12EC411",
+            "name": "Fundamentals of Electric Vehicle",
+            "marks": 53,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 15, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 13, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 25, "max": 35 }
+            ]
+          },
+          {
+            "code": "24B12HS316",
+            "name": "Popular Literature",
+            "marks": 50,
+            "max_marks": 75,
+            "breakup": [
+              { "label": "T1-2025 EVEN SEM", "marks": 12, "max": 20 },
+              { "label": "T2-2025EVE-20MARKS", "marks": 11.5, "max": 20 },
+              { "label": "ENDTERM-35 MARKS", "marks": 26.5, "max": 35 }
+            ]
+          },
+          {
+            "code": "24B16HS311",
+            "name": "Basics of Creative Writing",
+            "marks": 39,
+            "max_marks": 70,
+            "breakup": [
+              { "label": "ENDTERM-40 MARKS", "marks": 19, "max": 40 },
+              { "label": "MIDTERM-30 MARKS", "marks": 20, "max": 30 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "subjects": {
+    "semestersData": {
+      "semesters": [
+        {
+          "registration_id": "2025EVESVEM",
+          "registration_code": "2025EVESVEM"
+        },
+        { "registration_id": "2025ODD", "registration_code": "2025ODD" }
+      ],
+      "latest_semester": {
+        "registration_id": "2025EVESVEM",
+        "registration_code": "2025EVESVEM"
+      }
+    },
+    "subjectData": {
+      "2025EVESVEM": {
+        "total_credits": 23,
+        "subjects": [
+          {
+            "subject_code": "15B11EC611",
+            "subject_desc": "TELECOMMUNICATION NETWORKS",
+            "credits": 3,
+            "subject_component_code": "L",
+            "employee_name": "PANKAJ KUMAR YADAV",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "15B17EC671",
+            "subject_desc": "TELECOMMUNICATION NETWORKS LAB",
+            "credits": 1,
+            "subject_component_code": "P",
+            "employee_name": "PANKAJ KUMAR YADAV",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "15B19EC691",
+            "subject_desc": "MINOR PROJECT-2",
+            "credits": 2,
+            "subject_component_code": "P",
+            "employee_name": "VISHAL NARAIN SAXENA",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "17B11EC731",
+            "subject_desc": "MOBILE COMMUNICATION",
+            "credits": 3,
+            "subject_component_code": "L",
+            "employee_name": "SAMRITI KALIA",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "18B11EC315",
+            "subject_desc": "VLSI Design",
+            "credits": 4,
+            "subject_component_code": "L",
+            "employee_name": "SAURABH CHATURVEDI",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "18B15EC315",
+            "subject_desc": "VLSI Design Lab-II",
+            "credits": 1,
+            "subject_component_code": "P",
+            "employee_name": "SAURABH CHATURVEDI",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "20B12HS311",
+            "subject_desc": "GLOBAL POLITICS",
+            "credits": 3,
+            "subject_component_code": "L",
+            "employee_name": "ILA JOSHI",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "24B12EC411",
+            "subject_desc": "Fundamentals of Electric Vehicle",
+            "credits": 3,
+            "subject_component_code": "L",
+            "employee_name": "RUBY BENIWAL",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "24B12HS316",
+            "subject_desc": "Popular Literature",
+            "credits": 3,
+            "subject_component_code": "L",
+            "employee_name": "MOHUA DUTTA",
+            "audtsubject": "N"
+          },
+          {
+            "subject_code": "24B16HS311",
+            "subject_desc": "Basics of Creative Writing",
+            "credits": 2,
+            "subject_component_code": "L",
+            "employee_name": "HARLEEN KAUR",
+            "audtsubject": "Y"
+          }
+        ]
+      }
+    }
+  },
+  "profile": {
+    "generalinformation": {
+      "studentname": "Tashif",
+      "registrationno": "22106921",
+      "programcode": "BTECH",
+      "branch": "ECE",
+      "sectioncode": "A6",
+      "batch": "2026",
+      "semester": "7",
+      "institutecode": "JIIT",
+      "academicyear": "2223",
+      "admissionyear": "2022",
+      "dateofbirth": "01/01/2005",
+      "gender": "Male",
+      "bloodgroup": "A+",
+      "nationality": "Indian",
+      "category": "General",
+      "studentemailid": "22106921@mail.jiit.ac.in",
+      "studentpersonalemailid": "hi@tashif.codes",
+      "studentcellno": "9876543210",
+      "studenttelephoneno": "",
+      "fathersname": "Mr.",
+      "mothername": "Mrs.",
+      "parentemailid": "parent.hi@tashif.codes",
+      "parentcellno": "9876543211",
+      "parenttelephoneno": "",
+      "caddress1": "Meow Street",
+      "caddress3": "Noida",
+      "ccityname": "Noida",
+      "cdistrict": "Gautam Buddha Nagar",
+      "cstatename": "Uttar Pradesh",
+      "cpostalcode": "201301",
+      "paddress1": "Meow Street",
+      "paddress2": "Sector 62",
+      "paddress3": "Noida",
+      "pcityname": "Noida",
+      "pdistrict": "Gautam Buddha Nagar",
+      "pstatename": "Uttar Pradesh",
+      "ppostalcode": "201301",
+      "profileimgurl": ""
+    },
+    "qualification": [
+      {
+        "qualificationcode": "10th",
+        "boardname": "CBSE",
+        "yearofpassing": "2020",
+        "obtainedmarks": "480",
+        "fullmarks": "500",
+        "percentagemarks": "99.99",
+        "division": "First",
+        "grade": "A1"
+      },
+      {
+        "qualificationcode": "12th",
+        "boardname": "CBSE",
+        "yearofpassing": "2022",
+        "obtainedmarks": "470",
+        "fullmarks": "500",
+        "percentagemarks": "99",
+        "division": "First",
+        "grade": "A1"
+      }
+    ],
+    "photo&signature": {
+      "photo": "",
+      "signature": ""
+    }
+  },
+  "exams": {
+    "examSemesters": [
+      { "registration_id": "2025ODD", "registration_code": "2023 Fall" }
+    ],
+    "examEvents": [
+      { "exam_event_id": "T1", "exam_event_desc": "Test 1" },
+      { "exam_event_id": "T2", "exam_event_desc": "Test 2" },
+      {
+        "exam_event_id": "MakeUp",
+        "exam_event_desc": "Make Up Exam for T1 & T2"
+      },
+      { "exam_event_id": "T3", "exam_event_desc": "End Semester 1" }
+    ],
+    "examSchedule": {
+      "T1": [
+        {
+          "subjectcode": "MATH101",
+          "subjectdesc": "Mathematics I (L)",
+          "datetime": "15/09/2023",
+          "datetimefrom": "09:00",
+          "datetimeupto": "10:00",
+          "roomcode": "LT1",
+          "seatno": "A1"
+        }
+      ],
+      "T3": [
+        {
+          "subjectcode": "PHY101",
+          "subjectdesc": "Physics I (L)",
+          "datetime": "30/11/2023",
+          "datetimefrom": "15:30",
+          "datetimeupto": "17:00",
+          "roomcode": "Lt3",
+          "seatno": "D6"
+        }
+      ]
+    }
+  }
+}

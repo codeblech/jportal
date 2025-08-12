@@ -1,5 +1,26 @@
-/* Add these styles to your App.css */
+/* Theming variables */
+:root {
+  --bg-color: #191c20;
+  --primary-color: #1e293b;
+  --accent-color: #2563eb;
+  --text-color: #e0e6ed;
+  --card-bg: #23272f;
+}
+
 body, #root {
-  background-color: #191c20;
+  background-color: var(--bg-color);
   min-height: 100vh;
+  color: var(--text-color);
+}
+
+.card {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+}
+
+.accent {
+  color: var(--accent-color);
 }
