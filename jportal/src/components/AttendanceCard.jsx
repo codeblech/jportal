@@ -26,7 +26,8 @@ const AttendanceCard = ({
 }) => {
   const { name, attendance, combined, lecture, tutorial, practical, classesNeeded, classesCanMiss } = subject;
   console.log(name, attendance, combined, lecture, tutorial, practical)
-  const attendancePercentage = (attendance.total > 0) ? combined.toFixed(0) : "100";
+  const attendancePercentage = (attendance.total > 0)
+  ? ((attendance.attended / attendance.total) * 100).toFixed(0): "100";
   const displayName = name.replace(/\s*\([^)]*\)\s*$/, '');
 
   const [isLoading, setIsLoading] = useState(false);
