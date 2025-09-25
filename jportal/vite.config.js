@@ -69,12 +69,16 @@ export default defineConfig({
   ],
   server: (() => {
     if (process.env.NODE_ENV === "development") {
+      const httpsConfig = fs.existsSync("./certs/localhost-key.pem") && fs.existsSync("./certs/localhost.pem") 
+        ? {
+            key: fs.readFileSync("./certs/localhost-key.pem"),
+            cert: fs.readFileSync("./certs/localhost.pem"),
+          }
+        : false;
+
       return {
         host: true,
-        https: {
-          key: fs.readFileSync("./certs/localhost-key.pem"),
-          cert: fs.readFileSync("./certs/localhost.pem"),
-        },
+        https: httpsConfig,
       };
     }
     return { host: true };
