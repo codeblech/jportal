@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
-import TopTabsBar from "./ui/TopTabsBar";
 import { useThemeStore } from "@/stores/theme-store";
-import { AlertCircle, CheckCircle, DollarSign, FileText, TrendingUp } from "lucide-react";
+import { AlertCircle, CheckCircle, DollarSign, TrendingUp } from "lucide-react";
 
 export default function Fees({ w, feesData, setFeesData, guest = false }) {
   const [loading, setLoading] = useState(true);
@@ -117,60 +116,29 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
         </div>
       )}
       
-      <div className="flex-1 flex flex-row w-full max-w-6xl mx-auto">
+      <div className="flex-1 flex flex-col w-full">
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="flex w-full"
+          className="w-full px-3 pb-4"
         >
-          {/* Sidebar Tabs for large screens */}
-          <div className="w-64 flex-shrink-0 hidden lg:block">
-            <TopTabsBar
-              orientation="vertical"
-              className="mb-6 items-center grid grid-cols-1 w-64 h-auto py-4 gap-2"
+          <TabsList className="grid grid-cols-2 bg-background gap-3">
+            <TabsTrigger
+              value="fines"
+              className="cursor-pointer text-muted-foreground bg-background data-[state=active]:bg-muted data-[state=active]:text-foreground"
             >
-              <TabsTrigger
-                value="fines"
-                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground text-[1.1rem] font-medium transition-colors"
-              >
-                <DollarSign className="w-5 h-5 mr-2" />
-                Pending Fines
-              </TabsTrigger>
-              <TabsTrigger
-                value="summary"
-                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground text-[1.1rem] font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 mr-2" />
-                Fee Summary
-              </TabsTrigger>
-            </TopTabsBar>
-          </div>
+              Pending Fines
+            </TabsTrigger>
+            <TabsTrigger
+              value="summary"
+              className="cursor-pointer text-muted-foreground bg-background data-[state=active]:bg-muted data-[state=active]:text-foreground"
+            >
+              Fee Summary
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col items-center w-full px-4 sm:px-0">
-            {/* TabsList for mobile only */}
-            <div className="w-full lg:hidden mb-4">
-              <TopTabsBar
-                orientation="horizontal"
-                className="w-full flex flex-row justify-between h-12 overflow-x-auto whitespace-nowrap scrollbar-none"
-              >
-                <TabsTrigger
-                  value="fines"
-                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-card data-[state=active]:text-accent text-muted-foreground transition-colors"
-                >
-                  Pending Fines
-                </TabsTrigger>
-                <TabsTrigger
-                  value="summary"
-                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-card data-[state=active]:text-accent text-muted-foreground transition-colors"
-                >
-                  Fee Summary
-                </TabsTrigger>
-              </TopTabsBar>
-            </div>
-
-            {/* Pending Fines Tab */}
-            <TabsContent value="fines" className="w-full mt-0">
+          {/* Pending Fines Tab */}
+          <TabsContent value="fines" className="w-full mt-0">
               <div className="w-full space-y-4">
                 {finesArray.length > 0 ? (
                   <>
@@ -261,8 +229,8 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
               </div>
             </TabsContent>
 
-            {/* Fee Summary Tab */}
-            <TabsContent value="summary" className="w-full mt-0">
+          {/* Fee Summary Tab */}
+          <TabsContent value="summary" className="w-full mt-0">
               <div className="w-full space-y-4">
                 {/* Overall Summary Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -427,7 +395,6 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
 
               </div>
             </TabsContent>
-          </div>
         </Tabs>
       </div>
     </div>
