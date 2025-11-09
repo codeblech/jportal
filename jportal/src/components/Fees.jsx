@@ -3,7 +3,7 @@ import Loader from "./Loader";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { useSwipeable } from "react-swipeable";
 import TopTabsBar from "./ui/TopTabsBar";
-import { useTheme } from "./ThemeProvider";
+import { useThemeStore } from "@/stores/theme-store";
 import { AlertCircle, CheckCircle, DollarSign, FileText, TrendingUp } from "lucide-react";
 
 export default function Fees({ w, feesData, setFeesData, guest = false }) {
@@ -11,28 +11,14 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("fines");
 
-  const { theme, customThemes, selectedCustomTheme, useCardBackgrounds } =
-    useTheme();
+  // Subscribe to theme store to ensure re-renders on theme changes
+  const themeState = useThemeStore((state) => state.themeState);
   
-  const accentSeparator =
-    theme === "custom"
-      ? customThemes[selectedCustomTheme]?.colors["--accent-color"] || "#7ec3f0"
-      : theme === "white"
-      ? "#3182ce"
-      : theme === "cream"
-      ? "#A47551"
-      : theme === "amoled"
-      ? "#00bcd4"
-      : "#7ec3f0";
-
-  const separatorStyle = !useCardBackgrounds
-    ? {
-        borderBottom: `1px solid ${accentSeparator}66`,
-        margin: "2px 0",
-        minHeight: 0,
-        height: 0,
-      }
-    : {};
+  // Force re-render when theme changes
+  const [, setForceUpdate] = useState({});
+  useEffect(() => {
+    setForceUpdate({});
+  }, [themeState]);
 
   // Tab order for swiping
   const tabOrder = ["fines", "summary"];
@@ -112,8 +98,8 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
     return (
       <div className="min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-          <p className="text-[var(--text-color)] text-lg">{error}</p>
+          <AlertCircle className="w-16 h-16 mx-auto mb-4 text-destructive" />
+          <p className="text-foreground text-lg">{error}</p>
         </div>
       </div>
     );
@@ -150,7 +136,7 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
   return (
     <div className="min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-6rem)] flex flex-col w-full">
       {guest && (
-        <div className="w-full max-w-3xl mx-auto mb-4 rounded-[var(--radius)] bg-[var(--accent-color)] text-[var(--bg-color)] text-center py-2 font-semibold shadow-md">
+        <div className="w-full max-w-3xl mx-auto mb-4 rounded-lg bg-accent text-accent-foreground text-center py-2 font-semibold shadow-md">
           Guest Demo: Viewing Sample Data
         </div>
       )}
@@ -169,14 +155,14 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
             >
               <TabsTrigger
                 value="fines"
-                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-[var(--primary-color)] data-[state=active]:text-[var(--text-color)] text-[var(--label-color)] text-[1.1rem] font-medium transition-colors"
+                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground text-[1.1rem] font-medium transition-colors"
               >
                 <DollarSign className="w-5 h-5 mr-2" />
                 Pending Fines
               </TabsTrigger>
               <TabsTrigger
                 value="summary"
-                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-[var(--primary-color)] data-[state=active]:text-[var(--text-color)] text-[var(--label-color)] text-[1.1rem] font-medium transition-colors"
+                className="flex items-center justify-start px-6 py-3 w-full rounded-none data-[state=active]:rounded-2xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground text-[1.1rem] font-medium transition-colors"
               >
                 <FileText className="w-5 h-5 mr-2" />
                 Fee Summary
@@ -197,13 +183,13 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
               >
                 <TabsTrigger
                   value="fines"
-                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-[var(--card-bg)] data-[state=active]:text-[var(--accent-color)] text-[var(--label-color)] transition-colors"
+                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-card data-[state=active]:text-accent text-muted-foreground transition-colors"
                 >
                   Pending Fines
                 </TabsTrigger>
                 <TabsTrigger
                   value="summary"
-                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-[var(--card-bg)] data-[state=active]:text-[var(--accent-color)] text-[var(--label-color)] transition-colors"
+                  className="flex-1 min-w-fit text-lg font-semibold data-[state=active]:bg-card data-[state=active]:text-accent text-muted-foreground transition-colors"
                 >
                   Fee Summary
                 </TabsTrigger>
@@ -216,11 +202,11 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                 {finesArray.length > 0 ? (
                   <>
                     {/* Total Fines Summary Card */}
-                    <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-[var(--radius)] p-6 shadow-md border-orange-500">
+                    <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-lg p-6 shadow-md border-orange-500">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-[var(--label-color)] text-sm font-medium mb-1">Total Fines Pending</p>
-                          <p className="text-3xl font-bold text-[var(--accent-color)]">
+                          <p className="text-muted-foreground text-sm font-medium mb-1">Total Fines Pending</p>
+                          <p className="text-3xl font-bold text-accent">
                             {formatCurrency(totalFines)}
                           </p>
                         </div>
@@ -232,14 +218,14 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                     {finesArray.map((fine, index) => (
                       <div
                         key={index}
-                        className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md border-orange-500"
+                        className="bg-card rounded-lg p-6 shadow-md border-orange-500"
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-[var(--text-color)] mb-1">
+                            <h3 className="text-lg font-semibold text-card-foreground mb-1">
                               {fine.servicename || "Miscellaneous Charge"}
                             </h3>
-                            <p className="text-sm text-[var(--label-color)]">
+                            <p className="text-sm text-muted-foreground">
                               {fine.remarksbyauthority || "No remarks"}
                             </p>
                           </div>
@@ -251,24 +237,24 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
                           {fine.servicecode && (
                             <div>
-                              <span className="text-xs text-[var(--label-color)] uppercase font-semibold">Service</span>
-                              <p className="text-[var(--text-color)] font-medium text-sm mt-1">
+                              <span className="text-xs text-muted-foreground uppercase font-semibold">Service</span>
+                              <p className="text-card-foreground font-medium text-sm mt-1">
                                 {fine.servicecode}
                               </p>
                             </div>
                           )}
                           {fine.requestno && (
                             <div>
-                              <span className="text-xs text-[var(--label-color)] uppercase font-semibold">Request No</span>
-                              <p className="text-[var(--text-color)] font-medium text-sm mt-1">
+                              <span className="text-xs text-muted-foreground uppercase font-semibold">Request No</span>
+                              <p className="text-card-foreground font-medium text-sm mt-1">
                                 {fine.requestno}
                               </p>
                             </div>
                           )}
                           {fine.quantity && (
                             <div>
-                              <span className="text-xs text-[var(--label-color)] uppercase font-semibold">Quantity</span>
-                              <p className="text-[var(--text-color)] font-medium text-sm mt-1">
+                              <span className="text-xs text-muted-foreground uppercase font-semibold">Quantity</span>
+                              <p className="text-card-foreground font-medium text-sm mt-1">
                                 {fine.quantity}
                               </p>
                             </div>
@@ -276,11 +262,11 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                         </div>
 
                         {fine.remarksbystudents && (
-                          <div className="mt-4 p-3 bg-[var(--bg-color)]/50 rounded-lg">
-                            <span className="text-xs text-[var(--label-color)] uppercase font-semibold">
+                          <div className="mt-4 p-3 bg-background/50 rounded-lg">
+                            <span className="text-xs text-muted-foreground uppercase font-semibold">
                               Student Remarks
                             </span>
-                            <p className="text-[var(--text-color)] text-sm mt-1">
+                            <p className="text-card-foreground text-sm mt-1">
                               {fine.remarksbystudents}
                             </p>
                           </div>
@@ -289,12 +275,12 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                     ))}
                   </>
                 ) : (
-                  <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-12 text-center shadow-md">
-                    <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                    <h3 className="text-xl font-semibold text-[var(--text-color)] mb-2">
+                  <div className="bg-card rounded-lg p-12 text-center shadow-md">
+                    <CheckCircle className="w-16 h-16 mx-auto mb-4 text-chart-1" />
+                    <h3 className="text-xl font-semibold text-card-foreground mb-2">
                       No Pending Fines
                     </h3>
-                    <p className="text-[var(--label-color)]">
+                    <p className="text-muted-foreground">
                       You don't have any pending fines or miscellaneous charges.
                     </p>
                   </div>
@@ -308,11 +294,11 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                 {/* Overall Summary Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Total Fee Card */}
-                  <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md border-blue-500">
+                  <div className="bg-card rounded-lg p-6 shadow-md border-blue-500">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[var(--label-color)] text-sm font-medium">Total Fee</p>
-                        <p className="text-2xl font-bold text-[var(--text-color)] mt-1">
+                        <p className="text-muted-foreground text-sm font-medium">Total Fee</p>
+                        <p className="text-2xl font-bold text-card-foreground mt-1">
                           {formatCurrency(totalFeeAmount)}
                         </p>
                       </div>
@@ -321,37 +307,37 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                   </div>
 
                   {/* Total Received Card */}
-                  <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md border-green-500">
+                  <div className="bg-card rounded-lg p-6 shadow-md border-green-500">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[var(--label-color)] text-sm font-medium">Total Received</p>
-                        <p className="text-2xl font-bold text-green-600 mt-1">
+                        <p className="text-muted-foreground text-sm font-medium">Total Received</p>
+                        <p className="text-2xl font-bold text-chart-1 mt-1">
                           {formatCurrency(totalReceived)}
                         </p>
                       </div>
-                      <CheckCircle className="w-10 h-10 text-green-500 opacity-30" />
+                      <CheckCircle className="w-10 h-10 text-chart-1 opacity-30" />
                     </div>
                   </div>
 
                   {/* Total Due Card */}
-                  <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md border-red-500">
+                  <div className="bg-card rounded-lg p-6 shadow-md border-red-500">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[var(--label-color)] text-sm font-medium">Total Due</p>
-                        <p className="text-2xl font-bold text-red-600 mt-1">
+                        <p className="text-muted-foreground text-sm font-medium">Total Due</p>
+                        <p className="text-2xl font-bold text-chart-2 mt-1">
                           {formatCurrency(totalDue)}
                         </p>
                       </div>
-                      <AlertCircle className="w-10 h-10 text-red-500 opacity-30" />
+                      <AlertCircle className="w-10 h-10 text-chart-2 opacity-30" />
                     </div>
                   </div>
 
                   {/* Advance/Refund Card */}
                   {(advanceAmount > 0 || totalRefund > 0) && (
-                    <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md border-t-4 border-purple-500">
+                    <div className="bg-card rounded-lg p-6 shadow-md border-t-4 border-purple-500">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-[var(--label-color)] text-sm font-medium">
+                          <p className="text-muted-foreground text-sm font-medium">
                             {advanceAmount > 0 ? "Advance" : "Refund"}
                           </p>
                           <p className="text-2xl font-bold text-purple-600 mt-1">
@@ -366,8 +352,8 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
 
                 {/* Fee Heads by Semester/Event */}
                 {feeHeads.length > 0 && (
-                  <div className="bg-[var(--card-bg)] rounded-[var(--radius)] p-6 shadow-md">
-                    <h3 className="text-xl font-semibold text-[var(--text-color)] mb-6 flex items-center">
+                  <div className="bg-card rounded-lg p-6 shadow-md">
+                    <h3 className="text-xl font-semibold text-card-foreground mb-6 flex items-center">
                       Fee Breakdown by Semester
                     </h3>
 
@@ -383,44 +369,44 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                         return (
                           <div
                             key={idx}
-                            className="bg-[var(--bg-color)]/50 rounded-lg p-4 border-2 border-[var(--accent-color)]"
+                            className="bg-background/50 rounded-lg p-4 border-2 border-accent"
                           >
                             <div className="flex justify-between items-start mb-3">
                               <div>
-                                <p className="font-semibold text-[var(--text-color)]">
+                                <p className="font-semibold text-foreground">
                                   {semester} ({academicYear})
                                 </p>
-                                <p className="text-xs text-[var(--label-color)] mt-1">
+                                <p className="text-xs text-muted-foreground mt-1">
                                   Event: {head.eventid}
                                 </p>
                               </div>
-                              <span className="inline-block px-2 py-1 rounded bg-[var(--accent-color)]/10 text-[var(--accent-color)] text-xs font-medium">
+                              <span className="inline-block px-2 py-1 rounded bg-accent/10 text-accent text-xs font-medium">
                                 {head.stytypedesc || "Regular"}
                               </span>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                               <div>
-                                <span className="text-[var(--label-color)] text-xs uppercase">Fee Amount</span>
-                                <p className="text-[var(--text-color)] font-semibold">
+                                <span className="text-muted-foreground text-xs uppercase">Fee Amount</span>
+                                <p className="text-foreground font-semibold">
                                   {formatCurrency(feeAmount)}
                                 </p>
                               </div>
                               <div>
-                                <span className="text-[var(--label-color)] text-xs uppercase">Received</span>
-                                <p className="text-green-600 font-semibold">
+                                <span className="text-muted-foreground text-xs uppercase">Received</span>
+                                <p className="text-chart-1 font-semibold">
                                   {formatCurrency(received)}
                                 </p>
                               </div>
                               <div>
-                                <span className="text-[var(--label-color)] text-xs uppercase">Due</span>
-                                <p className="text-red-600 font-semibold">
+                                <span className="text-muted-foreground text-xs uppercase">Due</span>
+                                <p className="text-chart-2 font-semibold">
                                   {formatCurrency(due)}
                                 </p>
                               </div>
                               {refund > 0 && (
                                 <div>
-                                  <span className="text-[var(--label-color)] text-xs uppercase">Refund</span>
+                                  <span className="text-muted-foreground text-xs uppercase">Refund</span>
                                   <p className="text-purple-600 font-semibold">
                                     {formatCurrency(refund)}
                                   </p>
@@ -432,27 +418,27 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
                             {(parseFloat(head.waiveramount) > 0 || 
                               parseFloat(head.transferinamount) > 0 || 
                               parseFloat(head.transferoutamount) > 0) && (
-                              <div className="mt-3 pt-3 border-t border-[var(--label-color)]/20 grid grid-cols-3 gap-2 text-xs">
+                              <div className="mt-3 pt-3 border-t border-muted-foreground/20 grid grid-cols-3 gap-2 text-xs">
                                 {parseFloat(head.waiveramount) > 0 && (
                                   <div>
-                                    <span className="text-[var(--label-color)]">Waived</span>
-                                    <p className="text-[var(--text-color)] font-medium">
+                                    <span className="text-muted-foreground">Waived</span>
+                                    <p className="text-foreground font-medium">
                                       {formatCurrency(head.waiveramount)}
                                     </p>
                                   </div>
                                 )}
                                 {parseFloat(head.transferinamount) > 0 && (
                                   <div>
-                                    <span className="text-[var(--label-color)]">Transfer In</span>
-                                    <p className="text-[var(--text-color)] font-medium">
+                                    <span className="text-muted-foreground">Transfer In</span>
+                                    <p className="text-foreground font-medium">
                                       {formatCurrency(head.transferinamount)}
                                     </p>
                                   </div>
                                 )}
                                 {parseFloat(head.transferoutamount) > 0 && (
                                   <div>
-                                    <span className="text-[var(--label-color)]">Transfer Out</span>
-                                    <p className="text-[var(--text-color)] font-medium">
+                                    <span className="text-muted-foreground">Transfer Out</span>
+                                    <p className="text-foreground font-medium">
                                       {formatCurrency(head.transferoutamount)}
                                     </p>
                                   </div>
