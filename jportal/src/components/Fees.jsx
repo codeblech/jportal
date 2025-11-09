@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Loader from "./Loader";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { useSwipeable } from "react-swipeable";
 import TopTabsBar from "./ui/TopTabsBar";
@@ -91,7 +90,7 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
   }, [w, feesData, setFeesData]);
 
   if (loading) {
-    return <Loader message="Loading fees data..." />;
+    return <p>Loading fees data...</p>;
   }
 
   if (error) {
