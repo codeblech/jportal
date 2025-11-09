@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
-import { useSwipeable } from "react-swipeable";
 import TopTabsBar from "./ui/TopTabsBar";
 import { useThemeStore } from "@/stores/theme-store";
 import { AlertCircle, CheckCircle, DollarSign, FileText, TrendingUp } from "lucide-react";
@@ -18,29 +17,7 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
   useEffect(() => {
     setForceUpdate({});
   }, [themeState]);
-
-  // Tab order for swiping
-  const tabOrder = ["fines", "summary"];
-
-  // Swipe handlers for tab navigation
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      const currentIndex = tabOrder.indexOf(activeTab);
-      if (currentIndex < tabOrder.length - 1) {
-        setActiveTab(tabOrder[currentIndex + 1]);
-      }
-    },
-    onSwipedRight: () => {
-      const currentIndex = tabOrder.indexOf(activeTab);
-      if (currentIndex > 0) {
-        setActiveTab(tabOrder[currentIndex - 1]);
-      }
-    },
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true,
-    delta: 50,
-    swipeDuration: 500,
-  });
+  // Theme re-render helper (swipe removed)
 
   useEffect(() => {
     const fetchFeesData = async () => {
@@ -170,10 +147,7 @@ export default function Fees({ w, feesData, setFeesData, guest = false }) {
           </div>
 
           {/* Main Content */}
-          <div
-            className="flex-1 flex flex-col items-center w-full px-4 sm:px-0"
-            {...swipeHandlers}
-          >
+          <div className="flex-1 flex flex-col items-center w-full px-4 sm:px-0">
             {/* TabsList for mobile only */}
             <div className="w-full lg:hidden mb-4">
               <TopTabsBar
