@@ -14,7 +14,6 @@ import { ThemeScript } from "./components/theme-script";
 import { DynamicFontLoader } from "./components/DynamicFontLoader";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
-
 import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 
 import MockWebPortal from "./components/MockWebPortal";
@@ -330,6 +329,37 @@ function App() {
     setIsAuthenticated(true);
     setIsDemoMode(true);
   };
+
+  // After authentication (including auto-login), fetch and print fee summary and pending fines
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const portal = isDemoMode ? mockPortal : realPortal;
+
+    const fetchAndLogPayments = async () => {
+      try {
+        const feeSummary = await portal.get_fee_summary();
+        console.log("[Portal] Fee summary:", feeSummary);
+      } catch (err) {
+        console.error("[Portal] Failed to fetch fee summary:", err);
+      }
+
+      try {
+        const fines = await portal.get_fines_msc_charges();
+        console.log("[Portal] Pending miscellaneous charges / fines:", fines);
+      } catch (err) {
+        // The API may return Failure with message "NO APPROVED REQUEST FOUND" when there are no fines
+        if (err && err.message && err.message.includes("NO APPROVED REQUEST FOUND")) {
+          console.info("[Portal] No pending fines found (NO APPROVED REQUEST FOUND).");
+        } else {
+          console.error("[Portal] Failed to fetch pending fines:", err);
+        }
+      }
+    };
+
+    // Do not block UI - fire and forget
+    fetchAndLogPayments();
+  }, [isAuthenticated, isDemoMode]);
 
   if (isLoading) {
     return (
