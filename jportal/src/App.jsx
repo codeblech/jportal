@@ -8,6 +8,7 @@ import Grades from "./components/Grades";
 import Exams from "./components/Exams";
 import Subjects from "./components/Subjects";
 import Profile from "./components/Profile";
+import Fees from "./components/Fees";
 import Cloudflare from "@/components/Cloudflare";
 import { ThemeProvider } from "./components/theme-provider";
 import { ThemeScript } from "./components/theme-script";
@@ -15,7 +16,7 @@ import { DynamicFontLoader } from "./components/DynamicFontLoader";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
-import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.20/dist/jsjiit.esm.js";
+import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.22/dist/jsjiit.esm.js";
 
 import MockWebPortal from "./components/MockWebPortal";
 import { TriangleAlert } from "lucide-react";
@@ -98,6 +99,9 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
   // Add these new states lifted from Attendance.jsx
   const [isAttendanceMetaLoading, setIsAttendanceMetaLoading] = useState(true);
   const [isAttendanceDataLoading, setIsAttendanceDataLoading] = useState(true);
+
+  // Add state for fees data
+  const [feesData, setFeesData] = useState(null);
 
   return (
     <div className="min-h-screen pb-14 select-none">
@@ -212,6 +216,10 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
           }
         />
         <Route path="/profile" element={<Profile w={w} profileData={profileData} setProfileData={setProfileData} />} />
+        <Route
+          path="/fees"
+          element={<Fees w={w} feesData={feesData} setFeesData={setFeesData} guest={false} />}
+        />
       </Routes>
       <Navbar />
     </div>
@@ -296,6 +304,37 @@ function App() {
     setIsAuthenticated(true);
     setIsDemoMode(true);
   };
+
+  // After authentication (including auto-login), fetch and print fee summary and pending fines
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const portal = isDemoMode ? mockPortal : realPortal;
+
+    const fetchAndLogPayments = async () => {
+      try {
+        const feeSummary = await portal.get_fee_summary();
+        console.log("[Portal] Fee summary:", feeSummary);
+      } catch (err) {
+        console.error("[Portal] Failed to fetch fee summary:", err);
+      }
+
+      try {
+        const fines = await portal.get_fines_msc_charges();
+        console.log("[Portal] Pending miscellaneous charges / fines:", fines);
+      } catch (err) {
+        // The API may return Failure with message "NO APPROVED REQUEST FOUND" when there are no fines
+        if (err && err.message && err.message.includes("NO APPROVED REQUEST FOUND")) {
+          console.info("[Portal] No pending fines found (NO APPROVED REQUEST FOUND).");
+        } else {
+          console.error("[Portal] Failed to fetch pending fines:", err);
+        }
+      }
+    };
+
+    // Do not block UI - fire and forget
+    fetchAndLogPayments();
+  }, [isAuthenticated, isDemoMode]);
 
   if (isLoading) {
     return (

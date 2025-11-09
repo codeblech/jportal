@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.20/dist/jsjiit.esm.js";
+import { LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.22/dist/jsjiit.esm.js";
 import PublicHeader from "./PublicHeader";
 
 // Define the form schema
