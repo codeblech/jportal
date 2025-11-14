@@ -16,6 +16,17 @@ const AttendanceCard = ({
   const attendancePercentage = attendance.total > 0 ? combined.toFixed(0) : "100";
   const displayName = name.replace(/\s*\([^)]*\)\s*$/, "");
 
+  // Determine the color variant based on attendance status
+  const getProgressVariant = () => {
+    if (classesNeeded > 2) {
+      return "danger"; // Need more than 2 classes - red/danger
+    } else if (classesNeeded > 0) {
+      return "warning"; // Need 1-2 classes - yellow/warning
+    } else {
+      return "primary"; // Can miss classes or on target - primary color
+    }
+  };
+
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -118,7 +129,7 @@ const AttendanceCard = ({
             <div className="text-sm">{attendance.total}</div>
           </div>
           <div className="flex flex-col items-center">
-            <CircleProgress key={Date.now()} percentage={attendancePercentage} />
+            <CircleProgress key={Date.now()} percentage={attendancePercentage} variant={getProgressVariant()} />
             {classesNeeded > 0 ? (
               <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
             ) : (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function CircleProgress({ percentage, label, className = "" }) {
+function CircleProgress({ percentage, label, className = "", variant = "primary" }) {
   const strokeWidth = 3;
   const defaultRadius = 15;
   const radius = defaultRadius;
@@ -20,6 +20,19 @@ function CircleProgress({ percentage, label, className = "" }) {
     return () => clearTimeout(timer);
   }, [percentage, circumference]);
 
+  // Map variant to CSS variable
+  const getStrokeColor = () => {
+    switch (variant) {
+      case "danger":
+        return "var(--destructive)";
+      case "warning":
+        return "var(--chart-4)";
+      case "primary":
+      default:
+        return "var(--primary)";
+    }
+  };
+
   return (
     <svg className={`w-[80px] h-[80px] ${className}`} viewBox="0 0 50 50" preserveAspectRatio="xMidYMid meet">
       <g transform="rotate(-90 25 25)">
@@ -28,7 +41,7 @@ function CircleProgress({ percentage, label, className = "" }) {
           cy="25"
           r={radius}
           fill="transparent"
-          stroke="var(--primary)"
+          stroke={getStrokeColor()}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
