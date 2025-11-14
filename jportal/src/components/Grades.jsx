@@ -4,9 +4,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GradeCard from "./GradeCard";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { CalculatorIcon, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import MarksCard from "./MarksCard";
+import CGPATargetCalculator from "./TargetCPA";
 import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.16/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
 
@@ -392,7 +393,12 @@ export default function Grades({
                 </div>
               </>
             )}
-            <div className="w-full flex justify-end my-4 max-w-4xl">
+            <div className="w-full flex justify-end my-4 max-w-4xl gap-2">
+              <CGPATargetCalculator 
+                w={w}
+                semesterData={semesterData}
+                guest={w instanceof MockWebPortal}
+              />
               <Button
                 variant="secondary"
                 className="flex items-center gap-2 text-popover-foreground hover:text-accent-foreground border-border bg-background hover:bg-accent px-2 cursor-pointer"
@@ -444,7 +450,12 @@ export default function Grades({
                 )}
               </>
             )}
-            <div className="w-full flex justify-end my-4 max-w-4xl">
+            <div className="w-full flex justify-end my-4 max-w-4xl gap-2">
+              <CGPATargetCalculator 
+                w={w}
+                semesterData={semesterData}
+                guest={w instanceof MockWebPortal}
+              />
               <Button
                 variant="secondary"
                 className="flex items-center gap-2 text-popover-foreground hover:text-accent-foreground border-border bg-background hover:bg-accent px-2 cursor-pointer"
@@ -492,7 +503,12 @@ export default function Grades({
                 )}
               </>
             )}
-            <div className="w-full flex justify-end my-4 max-w-4xl">
+            <div className="w-full flex justify-end my-4 max-w-4xl gap-2">
+              <CGPATargetCalculator 
+                w={w}
+                semesterData={semesterData}
+                guest={w instanceof MockWebPortal}
+              />
               <Button
                 variant="secondary"
                 className="flex items-center gap-2 text-popover-foreground hover:text-accent-foreground border-border bg-background hover:bg-accent px-2 cursor-pointer"
