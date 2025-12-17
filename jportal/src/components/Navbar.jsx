@@ -15,7 +15,7 @@ function Navbar() {
   ];
 
   return (
-    <div className="flex items-center justify-between sm:gap-0 gap-2 w-screen fixed bottom-0 left-0 bg-muted py-4 px-4">
+    <div className="flex items-center justify-between gap-0 w-screen fixed bottom-0 left-0 bg-muted py-4 px-4">
       {navItems.map((item) => (
         <NavLink
           key={item.name}
@@ -28,7 +28,7 @@ function Navbar() {
           {({ isActive }) => (
             <div className="flex flex-col items-center">
               <div
-                className={`hover:bg-primary rounded-xl w-full p-1 flex items-center justify-center ${
+                className={`hover:bg-primary rounded-xl w-4/5 p-1 flex items-center justify-center ${
                   isActive ? "bg-primary" : ""
                 }`}
               >
@@ -36,7 +36,7 @@ function Navbar() {
                   className={`w-5 h-5 ${isActive ? "fill-primary-foreground" : "fill-muted-foreground"}`}
                 />
               </div>
-              <p className="max-[370px]:text-[0.6rem] max-[390px]:text-[0.7rem] text-xs text-left">
+              <p className="max-[400px]:text-[0.5rem] max-[460px]:text-[0.6rem] max-[540px]:text-[0.7rem] text-xs text-left">
                 {item.name}
               </p>
             </div>
