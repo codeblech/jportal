@@ -94,6 +94,27 @@ export default class MockWebPortal {
     return fakeData.profile;
   }
 
+  async get_fee_summary() {
+    return fakeData.fees.fee_summary || [];
+  }
+
+  async get_fines_msc_charges() {
+    return fakeData.fees.fines_msc_charges || [];
+  }
+
+  async get_student_choices(semester) {
+    let semKey = null;
+    if (!semester) semKey = null;
+    else if (typeof semester === "string") semKey = semester;
+    else semKey = semester.registration_code || semester.registration_id || null;
+
+    const choiceSubjects = fakeData.subjects && fakeData.subjects.choiceSubjects;
+    if (choiceSubjects && semKey && choiceSubjects[semKey]) {
+      return choiceSubjects[semKey];
+    }
+    return [];
+  }
+
   async get_semesters_for_exam_events() {
     return fakeData.exams.examSemesters || [];
   }
