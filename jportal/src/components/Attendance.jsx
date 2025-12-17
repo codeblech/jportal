@@ -298,16 +298,18 @@ const Attendance = ({
                 {attendanceData[selectedSem.registration_id].error}
               </div>
             ) : (
-              subjects.map((subject) => (
-                <AttendanceCard
-                  key={subject.name}
-                  subject={subject}
-                  selectedSubject={selectedSubject}
-                  setSelectedSubject={setSelectedSubject}
-                  subjectAttendanceData={subjectAttendanceData}
-                  fetchSubjectAttendance={fetchSubjectAttendance}
-                />
-              ))
+              <div className="space-y-4 mt-4 pb-4">
+                {subjects.map((subject) => (
+                  <AttendanceCard
+                    key={subject.name}
+                    subject={subject}
+                    selectedSubject={selectedSubject}
+                    setSelectedSubject={setSelectedSubject}
+                    subjectAttendanceData={subjectAttendanceData}
+                    fetchSubjectAttendance={fetchSubjectAttendance}
+                  />
+                ))}
+              </div>
             )}
           </TabsContent>
 

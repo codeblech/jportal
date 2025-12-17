@@ -36,6 +36,11 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
 
   const [subjectData, setSubjectData] = useState({});
   const [subjectSemestersData, setSubjectSemestersData] = useState(null);
+  const [subjectChoices, setSubjectChoices] = useState({});
+  const [activeSubjectsTab, setActiveSubjectsTab] = useState("registered");
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [subjectsDataLoading, setSubjectsDataLoading] = useState(true);
+  const [subjectChoicesLoading, setSubjectChoicesLoading] = useState(false);
 
   const [gradesData, setGradesData] = useState({});
   const [gradesSemesterData, setGradesSemesterData] = useState(null);
@@ -208,6 +213,16 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
               setSemestersData={setSubjectSemestersData}
               selectedSem={selectedSubjectsSem}
               setSelectedSem={setSelectedSubjectsSem}
+              subjectChoices={subjectChoices}
+              setSubjectChoices={setSubjectChoices}
+              activeTab={activeSubjectsTab}
+              setActiveTab={setActiveSubjectsTab}
+              loading={subjectsLoading}
+              setLoading={setSubjectsLoading}
+              subjectsLoading={subjectsDataLoading}
+              setSubjectsLoading={setSubjectsDataLoading}
+              choicesLoading={subjectChoicesLoading}
+              setChoicesLoading={setSubjectChoicesLoading}
             />
           }
         />

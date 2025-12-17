@@ -9,12 +9,25 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
-export default function Subjects({ w, subjectData, setSubjectData, semestersData, setSemestersData, selectedSem, setSelectedSem }) {
-  const [loading, setLoading] = useState(!semestersData);
-  const [subjectsLoading, setSubjectsLoading] = useState(!subjectData);
-  const [activeTab, setActiveTab] = useState("registered");
-  const [subjectChoices, setSubjectChoices] = useState({});
-  const [choicesLoading, setChoicesLoading] = useState(false);
+export default function Subjects({
+  w,
+  subjectData,
+  setSubjectData,
+  semestersData,
+  setSemestersData,
+  selectedSem,
+  setSelectedSem,
+  subjectChoices,
+  setSubjectChoices,
+  activeTab,
+  setActiveTab,
+  loading,
+  setLoading,
+  subjectsLoading,
+  setSubjectsLoading,
+  choicesLoading,
+  setChoicesLoading
+}) {
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -154,7 +167,7 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
   return (
     <div className="text-foreground font-sans max-w-7xl mx-auto">
       <div className="sticky top-14 bg-background/95 backdrop-blur-sm z-20">
-        <div className="py-3 px-4">
+        <div className="py-2 px-3">
           <Select onValueChange={handleSemesterChange} value={selectedSem?.registration_id} disabled={loading}>
             <SelectTrigger className="bg-background text-foreground border-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground">
               <SelectValue placeholder={loading ? "Loading..." : "Select semester"}>
@@ -172,16 +185,16 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="px-4 pb-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="px-3 pb-4">
         <TabsList className="grid grid-cols-2 bg-background gap-3">
-          <TabsTrigger 
-            value="registered" 
+          <TabsTrigger
+            value="registered"
             className="cursor-pointer text-muted-foreground bg-background data-[state=active]:bg-muted data-[state=active]:text-foreground"
           >
             Registered
           </TabsTrigger>
-          <TabsTrigger 
-            value="choices" 
+          <TabsTrigger
+            value="choices"
             className="cursor-pointer text-muted-foreground bg-background data-[state=active]:bg-muted data-[state=active]:text-foreground"
           >
             Choices
@@ -189,42 +202,30 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
         </TabsList>
 
         <TabsContent value="registered">
-          <div className="pb-4">
-            <div className="flex items-center justify-end mt-3 mb-2">
-              <div className="text-sm font-medium tabular-nums bg-accent/5 text-accent px-3 py-1 rounded-full border border-border">
-                <span className="text-muted-foreground mr-2">Total Credits</span>
-                <span>{currentSubjects?.total_credits || 0}</span>
-              </div>
+          <div className="flex items-center justify-end mt-3 mb-2">
+            <div className="text-sm font-medium tabular-nums bg-accent/5 text-primary px-3 py-1 rounded-md border border-border">
+              <span className="text-muted-foreground mr-2">Total Credits</span>
+              <span>{currentSubjects?.total_credits || 0}</span>
             </div>
-            {subjectsLoading ? (
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                Loading subjects...
-              </div>
-            ) : Object.keys(groupedSubjects).length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                No subjects found for this semester
-              </div>
-            ) : (
-              <div className="mt-4">
-                {/* Table Header */}
-                <div className="grid grid-cols-[1fr_auto] gap-4 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
-                  <div>Subject</div>
-                  <div className="text-right min-w-[60px]">Credits</div>
-                </div>
-
-                {/* Table Body */}
-                <div className="divide-y divide-border">
-                  {Object.values(groupedSubjects).map((subject) => (
-                    <SubjectInfoCard key={subject.code} subject={subject} />
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
+          {subjectsLoading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              Loading subjects...
+            </div>
+          ) : Object.keys(groupedSubjects).length === 0 ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              No subjects found for this semester
+            </div>
+          ) : (
+            <div className="mt-4 space-y-4 pb-4">
+              {Object.values(groupedSubjects).map((subject) => (
+                <SubjectInfoCard key={subject.code} subject={subject} />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="choices">
-          <div className="pb-4">
             {choicesLoading ? (
               <div className="flex items-center justify-center py-12 text-muted-foreground">
                 Loading subject choices...
@@ -247,7 +248,7 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
                   }, {})
                 ).map(([basketCode, basket]) => (
                   <div key={basketCode} className="border border-border rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-foreground mb-4">
+                    <h3 className="text-sm font-semibold text-foreground mb-4">
                       {basket.name}
                     </h3>
 
@@ -279,10 +280,10 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="font-semibold text-foreground">
+                                    <h4 className="font-semibold text-sm text-foreground">
                                       {subject.subjectdesc}
                                     </h4>
-                                    <p className="text-sm text-muted-foreground mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                       {subject.subjectcode} • {subject.credits} Credits
                                     </p>
                                   </div>
@@ -312,7 +313,6 @@ export default function Subjects({ w, subjectData, setSubjectData, semestersData
                 No subject choices available for this semester
               </div>
             )}
-          </div>
         </TabsContent>
       </Tabs>
     </div>

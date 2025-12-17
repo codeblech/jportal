@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CircleProgress from "./CircleProgress";
+import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -101,32 +102,34 @@ const AttendanceCard = ({
 
   return (
     <>
-      <div
-        className="group flex justify-between items-center py-1 border-b border-border cursor-pointer hover:bg-accent hover:text-accent-foreground"
+      <Card
+        className="shadow-lg cursor-pointer hover:bg-accent/50 transition-colors"
         onClick={handleClick}
       >
-        <div className="flex-1 mr-4">
-          <h2 className="text-sm font-semibold max-[390px]:text-xs ">{displayName}</h2>
-          {lecture !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Lecture: {lecture}%</p>}
-          {tutorial !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
-          {practical !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="text-center">
-            <div className="text-sm">{attendance.attended}</div>
-            <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
-            <div className="text-sm">{attendance.total}</div>
+        <div className="group flex justify-between items-center px-3 py-1">
+          <div className="flex-1 mr-4">
+            <h2 className="text-sm font-semibold max-[390px]:text-xs ">{displayName}</h2>
+            {lecture !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Lecture: {lecture}%</p>}
+            {tutorial !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
+            {practical !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
           </div>
-          <div className="flex flex-col items-center">
-            <CircleProgress key={Date.now()} percentage={attendancePercentage} />
-            {classesNeeded > 0 ? (
-              <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
-            ) : (
-              classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
-            )}
+          <div className="flex items-center gap-2">
+            <div className="text-center">
+              <div className="text-sm">{attendance.attended}</div>
+              <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
+              <div className="text-sm">{attendance.total}</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <CircleProgress key={Date.now()} percentage={attendancePercentage} />
+              {classesNeeded > 0 ? (
+                <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
+              ) : (
+                classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       <Sheet
         open={selectedSubject?.name === subject.name}
