@@ -482,10 +482,9 @@ export default function Grades({
                   <ButtonGroup>
                     <Button
                       variant="outline"
-                      size="sm"
                       onClick={toggleGradeSort}
                       title={`Sort by grade (${gradeSort})`}
-                      className="cursor-pointer"
+                      className="cursor-pointer px-2"
                     >
                       <span className="text-xs">Grade</span>
                       {gradeSort === "default" && <ListFilter className="w-3.5 h-3.5" />}
@@ -495,10 +494,9 @@ export default function Grades({
 
                     <Button
                       variant="outline"
-                      size="sm"
                       onClick={toggleCreditSort}
                       title={`Sort by credit (${creditSort})`}
-                      className="cursor-pointer"
+                      className="cursor-pointer px-2"
                     >
                       <span className="text-xs">Credit</span>
                       {creditSort === "default" && <ListFilter className="w-3.5 h-3.5" />}

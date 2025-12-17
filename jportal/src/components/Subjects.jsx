@@ -231,7 +231,7 @@ export default function Subjects({
                 Loading subject choices...
               </div>
             ) : currentChoices?.subjectpreferencegrid?.length > 0 ? (
-              <div className="mt-4 space-y-6">
+              <div className="mt-4 space-y-6 pb-4">
                 {/* Group subjects by basket */}
                 {Object.entries(
                   currentChoices.subjectpreferencegrid.reduce((acc, subject) => {
@@ -247,7 +247,7 @@ export default function Subjects({
                     return acc;
                   }, {})
                 ).map(([basketCode, basket]) => (
-                  <div key={basketCode} className="border border-border rounded-lg p-4">
+                  <div key={basketCode} className="border border-border rounded-lg p-4 shadow-lg">
                     <h3 className="text-sm font-semibold text-foreground mb-4">
                       {basket.name}
                     </h3>
