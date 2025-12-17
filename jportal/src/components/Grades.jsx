@@ -4,8 +4,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GradeCard from "./GradeCard";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, ListFilter, SortAsc, SortDesc } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
 import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.16/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
@@ -103,6 +104,54 @@ export default function Grades({
     };
     fetchGradeCardSemesters();
   }, [w, gradeCardSemesters.length, setGradeCardSemesters, selectedGradeCardSem]);
+
+    // sorting state for grade card list
+    const [creditSort, setCreditSort] = useState("default"); // default, asc, desc
+    const [gradeSort, setGradeSort] = useState("default"); // default, asc, desc
+
+    const nextSortState = (current) => (current === "default" ? "asc" : current === "asc" ? "desc" : "default");
+
+    const toggleCreditSort = () => {
+      const nextState = nextSortState(creditSort);
+      setCreditSort(nextState);
+      // Reset grade sort when switching to credit sort
+      if (nextState !== "default") {
+        setGradeSort("default");
+      }
+    };
+    
+    const toggleGradeSort = () => {
+      const nextState = nextSortState(gradeSort);
+      setGradeSort(nextState);
+      // Reset credit sort when switching to grade sort
+      if (nextState !== "default") {
+        setCreditSort("default");
+      }
+    };
+
+    // persist sort preferences
+    useEffect(() => {
+      try {
+        const saved = localStorage.getItem("grades_credit_sort");
+        if (saved === "asc" || saved === "desc" || saved === "default") setCreditSort(saved);
+      } catch (e) {}
+    }, []);
+    useEffect(() => {
+      try {
+        const saved = localStorage.getItem("grades_grade_sort");
+        if (saved === "asc" || saved === "desc" || saved === "default") setGradeSort(saved);
+      } catch (e) {}
+    }, []);
+    useEffect(() => {
+      try {
+        localStorage.setItem("grades_credit_sort", creditSort);
+      } catch (e) {}
+    }, [creditSort]);
+    useEffect(() => {
+      try {
+        localStorage.setItem("grades_grade_sort", gradeSort);
+      } catch (e) {}
+    }, [gradeSort]);
 
   useEffect(() => {
     const fetchMarksSemesters = async () => {
@@ -414,28 +463,85 @@ export default function Grades({
               </div>
             ) : (
               <>
-                <Select onValueChange={handleSemesterChange} value={selectedGradeCardSem?.registration_id}>
-                  <SelectTrigger className="bg-background text-foreground border-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground">
-                    <SelectValue placeholder={gradeCardLoading ? "Loading semesters..." : "Select semester"}>
-                      {selectedGradeCardSem?.registration_code}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent className="bg-background text-foreground border-foreground">
-                    {gradeCardSemesters.map((sem) => (
-                      <SelectItem key={sem.registration_id} value={sem.registration_id}>
-                        {sem.registration_code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2 mb-4">
+                  <Select onValueChange={handleSemesterChange} value={selectedGradeCardSem?.registration_id}>
+                    <SelectTrigger className="bg-background text-foreground border-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground">
+                      <SelectValue placeholder={gradeCardLoading ? "Loading semesters..." : "Select semester"}>
+                        {selectedGradeCardSem?.registration_code}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background text-foreground border-foreground">
+                      {gradeCardSemesters.map((sem) => (
+                        <SelectItem key={sem.registration_id} value={sem.registration_id}>
+                          {sem.registration_code}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <ButtonGroup>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleGradeSort}
+                      title={`Sort by grade (${gradeSort})`}
+                      className="cursor-pointer"
+                    >
+                      <span className="text-xs">Grade</span>
+                      {gradeSort === "default" && <ListFilter className="w-3.5 h-3.5" />}
+                      {gradeSort === "asc" && <SortAsc className="w-3.5 h-3.5" />}
+                      {gradeSort === "desc" && <SortDesc className="w-3.5 h-3.5" />}
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleCreditSort}
+                      title={`Sort by credit (${creditSort})`}
+                      className="cursor-pointer"
+                    >
+                      <span className="text-xs">Credit</span>
+                      {creditSort === "default" && <ListFilter className="w-3.5 h-3.5" />}
+                      {creditSort === "asc" && <SortAsc className="w-3.5 h-3.5" />}
+                      {creditSort === "desc" && <SortDesc className="w-3.5 h-3.5" />}
+                    </Button>
+                  </ButtonGroup>
+                </div>
 
                 {gradeCardLoading ? (
                   <div className="text-foreground flex items-center justify-center py-4">Loading subjects...</div>
                 ) : gradeCard ? (
                   <div className="space-y-2 mt-4">
-                    {gradeCard.gradecard.map((subject) => (
-                      <GradeCard key={subject.subjectcode} subject={subject} getGradeColor={getGradeColor} />
-                    ))}
+                    {(() => {
+                      const list = Array.isArray(gradeCard.gradecard) ? [...gradeCard.gradecard] : [];
+
+                      // helper to map grade to numeric value
+                      const gradeToValue = (g) => {
+                        if (!g) return -1;
+                        const order = ["F", "D", "C", "C+", "B", "B+", "A", "A+"];
+                        // give higher number to better grades
+                        const idx = order.indexOf(g);
+                        return idx === -1 ? -1 : idx;
+                      };
+
+                      if (gradeSort !== "default") {
+                        list.sort((a, b) => {
+                          const va = gradeToValue(a.grade);
+                          const vb = gradeToValue(b.grade);
+                          return gradeSort === "asc" ? va - vb : vb - va;
+                        });
+                      } else if (creditSort !== "default") {
+                        list.sort((a, b) => {
+                          const ca = parseFloat(a.coursecreditpoint) || 0;
+                          const cb = parseFloat(b.coursecreditpoint) || 0;
+                          return creditSort === "asc" ? ca - cb : cb - ca;
+                        });
+                      }
+
+                      return list.map((subject) => (
+                        <GradeCard key={subject.subjectcode} subject={subject} getGradeColor={getGradeColor} />
+                      ));
+                    })()}
                   </div>
                 ) : (
                   <div className="text-center py-8">
