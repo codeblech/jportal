@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Image, UserRound } from "lucide-react";
+import { Image, UserRound, GraduationCap, IdCard, Mail, BookOpen, Users, Calendar } from "lucide-react";
 
 
 export default function Profile({ w, profileData, setProfileData }) {
@@ -44,41 +44,99 @@ export default function Profile({ w, profileData, setProfileData }) {
   // Prepare profile/avatar image (mobile header)
   const photoData = profileData?.["photo&signature"]?.photo;
   const hasProfilePhoto = Boolean(photoData);
-  const avatarImg =
-    info.profileimgurl ||
-    "https://ui-avatars.com/api/?name=" +
-      encodeURIComponent(info.studentname || "User") +
-      "&background=0D8ABC&color=fff&size=128";
   const profileImg = hasProfilePhoto
     ? `data:image/jpeg;base64,${photoData}`
-    : avatarImg;
+    : null;
+
+  // Helper function to get initials from name
+  const getInitials = (name) => {
+    if (!name) return "U";
+    const nameParts = name.trim().split(/\s+/);
+    if (nameParts.length === 1) {
+      // Single name - take first 2 letters
+      return nameParts[0].substring(0, 2).toUpperCase();
+    }
+    // Multiple names - take first letter of first and last name
+    const firstName = nameParts[0];
+    const lastName = nameParts[nameParts.length - 1];
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+  };
+
+  const initials = getInitials(info.studentname);
 
   return (
     <div className="text-foreground pt-2 pb-4 px-3 font-sans space-y-4">
-      {/* Mobile Header: Avatar + basic info */}
-      <div className="w-full flex flex-col items-center pt-6 pb-2 relative">
+      {/* Profile Header Card */}
+      <div className="w-full bg-card rounded-lg border shadow-lg p-4 relative">
         {hasProfilePhoto && (
           <button
             type="button"
-            className="absolute top-2 right-2 inline-flex items-center justify-center h-9 w-9 rounded-full bg-primary text-primary-foreground shadow focus:outline-none"
+            className="absolute top-3 right-3 inline-flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground shadow-sm focus:outline-none hover:bg-primary/90 transition-colors"
             onClick={() => setShowProfilePhoto((p) => !p)}
             title={showProfilePhoto ? "Show Avatar" : "Show Photo"}
             aria-label={showProfilePhoto ? "Show Avatar" : "Show Photo"}
           >
-            {showProfilePhoto ? <UserRound size={18} /> : <Image size={18} />}
+            {showProfilePhoto ? <UserRound size={16} /> : <Image size={16} />}
           </button>
         )}
-        <img
-          src={showProfilePhoto && hasProfilePhoto ? profileImg : avatarImg}
-          alt="Profile"
-          className={`w-28 h-28 rounded-full object-cover shadow-md ${!showProfilePhoto || !hasProfilePhoto ? "border-4 border-primary" : ""}`}
-        />
-        <div className="mt-3 text-xl font-semibold text-center">
-          {info.studentname || "N/A"}
+
+        <div className="flex gap-4">
+          {/* Avatar */}
+          <div className="flex-shrink-0">
+            {showProfilePhoto && hasProfilePhoto ? (
+              <img
+                src={profileImg}
+                alt="Profile"
+                className="w-20 h-20 rounded-full object-cover shadow-md"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+                <span className="text-2xl font-bold">{initials}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold text-foreground mb-2 tracking-wide">
+              {info.studentname || "N/A"}
+            </h1>
+
+            <div className="space-y-1.5 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <GraduationCap size={16} className="flex-shrink-0" />
+                <span className="font-medium">{info.programcode || "N/A"}</span>
+                <IdCard size={16} className="flex-shrink-0 ml-2" />
+                <span className="font-medium">{info.registrationno || "N/A"}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Mail size={16} className="flex-shrink-0" />
+                <span className="font-medium truncate">{info.studentemailid || "N/A"}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground font-medium text-center">
-          {(info.registrationno || "N/A") + (info.programcode ? ` | ${info.programcode}` : "")}
-          {info.branch ? ` - ${info.branch}` : ""}
+
+        {/* Bottom Row: Semester, Section, Batch */}
+        <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border text-sm">
+          <div className="flex items-center gap-1.5">
+            <BookOpen size={16} className="text-muted-foreground" />
+            <span className="text-muted-foreground">Sem:</span>
+            <span className="font-semibold text-foreground">{info.semester || "N/A"}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Users size={16} className="text-muted-foreground" />
+            <span className="text-muted-foreground">Sec:</span>
+            <span className="font-semibold text-foreground">{info.sectioncode || "N/A"}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Calendar size={16} className="text-muted-foreground" />
+            <span className="text-muted-foreground">Batch:</span>
+            <span className="font-semibold text-foreground">{info.batch || "N/A"}</span>
+          </div>
         </div>
       </div>
 
@@ -113,7 +171,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 
         {/* Personal Information */}
         <TabsContent value="personal" className="mt-3 space-y-4">
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-md font-semibold mb-3">Personal Information</h2>
             <div className="grid">
               <InfoRow label="Date of Birth" value={info.dateofbirth} />
@@ -127,7 +185,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 
         {/* Academic Information */}
         <TabsContent value="academic" className="mt-3 space-y-4">
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-md font-semibold mb-3">Academic Information</h2>
             <div className="grid">
               <InfoRow label="Program" value={info.programcode} />
@@ -144,7 +202,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 
         {/* Contact + Family + Address */}
         <TabsContent value="contact" className="mt-3 space-y-4">
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-xl font-semibold mb-3">Contact Information</h2>
             <div className="grid">
               <InfoRow label="Student Email (College)" value={info.studentemailid} />
@@ -165,7 +223,7 @@ export default function Profile({ w, profileData, setProfileData }) {
             </div>
           </div>
 
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-md font-semibold mb-3">Current Address</h2>
             <div className="grid">
               <InfoRow label="Address" value={[info.caddress1, info.caddress3].filter(Boolean).join(", ")} />
@@ -176,7 +234,7 @@ export default function Profile({ w, profileData, setProfileData }) {
             </div>
           </div>
 
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-md font-semibold mb-3">Permanent Address</h2>
             <div className="grid">
               <InfoRow
@@ -193,7 +251,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 
         {/* Educational Qualifications */}
         <TabsContent value="education" className="mt-3 space-y-4">
-          <div className="bg-card p-4 rounded-lg shadow-lg">
+          <div className="bg-card p-4 rounded-lg border shadow-lg">
             <h2 className="text-md font-semibold mb-3">Educational Qualifications</h2>
             {qualifications.map((qual, index) => (
               <div key={index} className="grid">
