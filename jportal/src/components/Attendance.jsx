@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import AttendanceCard from "./AttendanceCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Progress } from "@/components/ui/progress";
 import CircleProgress from "./CircleProgress";
-import { Check, Loader2, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, Loader2, AlertCircle, ChevronDown, ChevronUp, ListFilter, SortAsc, SortDesc } from "lucide-react";
 
 const Attendance = ({
   w,
@@ -211,6 +212,32 @@ const Attendance = ({
     }
   };
 
+  // sort order for subjects: default, asc, desc
+  const [attendanceSortOrder, setAttendanceSortOrder] = useState("default");
+
+  const toggleSortOrder = () => {
+    setAttendanceSortOrder((prev) => (prev === "default" ? "asc" : prev === "asc" ? "desc" : "default"));
+  };
+
+  // load saved sort order from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("attendanceSortOrder");
+      if (saved === "asc" || saved === "desc" || saved === "default") setAttendanceSortOrder(saved);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // persist sort order
+  useEffect(() => {
+    try {
+      localStorage.setItem("attendanceSortOrder", attendanceSortOrder);
+    } catch (e) {
+      // ignore
+    }
+  }, [attendanceSortOrder]);
+
   useEffect(() => {
     if (activeTab !== "daily") return;
 
@@ -241,6 +268,24 @@ const Attendance = ({
     return all.filter((c) => c.datetime.startsWith(key));
   };
 
+  // compute sortedSubjects according to selected attendanceSortOrder
+  let sortedSubjects = [...subjects];
+  const getSortValue = (subject) => {
+    const attended = subject.attendance?.attended ?? 0;
+    const total = subject.attendance?.total ?? 0;
+    // treat 0/0 as very high so they appear on top (matches original behavior)
+    if (total === 0 && attended === 0) return 1000;
+    // prefer provided combined percentage, fallback to computed percentage
+    if (typeof subject.combined === "number") return subject.combined;
+    return total === 0 ? 0 : (attended / total) * 100;
+  };
+
+  if (attendanceSortOrder === "asc") {
+    sortedSubjects.sort((a, b) => getSortValue(a) - getSortValue(b));
+  } else if (attendanceSortOrder === "desc") {
+    sortedSubjects.sort((a, b) => getSortValue(b) - getSortValue(a));
+  }
+
   return (
     <div className="text-foreground font-sans">
       <div className="sticky top-14 bg-background z-20">
@@ -268,6 +313,15 @@ const Attendance = ({
             className="w-32 bg-background text-foreground border-foreground hover:bg-input/30"
             placeholder="Goal %"
           />
+          <Button
+            onClick={toggleSortOrder}
+            title="Toggle sort order"
+            className="bg-background text-foreground rounded-md px-3 py-1 flex items-center justify-center hover:opacity-90 border border-foreground"
+          >
+            {attendanceSortOrder === "default" && <ListFilter className="w-4 h-4" />}
+            {attendanceSortOrder === "asc" && <SortAsc className="w-4 h-4" />}
+            {attendanceSortOrder === "desc" && <SortDesc className="w-4 h-4" />}
+          </Button>
         </div>
       </div>
 
@@ -299,7 +353,7 @@ const Attendance = ({
               </div>
             ) : (
               <div className="space-y-4 mt-4 pb-4">
-                {subjects.map((subject) => (
+                {sortedSubjects.map((subject) => (
                   <AttendanceCard
                     key={subject.name}
                     subject={subject}
