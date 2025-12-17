@@ -102,7 +102,7 @@ export default class MockWebPortal {
     return fakeData.fees.fines_msc_charges || [];
   }
 
-  async get_student_choices(semester) {
+  async get_subject_choices(semester) {
     let semKey = null;
     if (!semester) semKey = null;
     else if (typeof semester === "string") semKey = semester;
@@ -110,9 +110,10 @@ export default class MockWebPortal {
 
     const choiceSubjects = fakeData.subjects && fakeData.subjects.choiceSubjects;
     if (choiceSubjects && semKey && choiceSubjects[semKey]) {
-      return choiceSubjects[semKey];
+      // Return the response object which contains the subjectpreferencegrid
+      return choiceSubjects[semKey].response || {};
     }
-    return [];
+    return { subjectpreferencegrid: [] };
   }
 
   async get_semesters_for_exam_events() {
