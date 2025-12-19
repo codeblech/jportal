@@ -158,58 +158,55 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
 
   return (
     <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl" ref={chartRef}>
-      <div className="mb-2 text-sm text-muted-foreground">
-        Drag the SGPA dots (blue) vertically to see how CGPA changes
-      </div>
       <div style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}>
-      <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={chartData} margin={{ top: 0, right: 10, left: 0, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-          <XAxis
-            dataKey="stynumber"
-            stroke="var(--muted-foreground)"
-            label={{ value: "Semester", position: "bottom", fill: "var(--muted-foreground)" }}
-            tickFormatter={(value) => `${value}`}
-          />
-          <YAxis
-            stroke="var(--muted-foreground)"
-            domain={[0, 10]}
-            ticks={[0, 2, 4, 6, 8, 10]}
-            tickFormatter={(value) => value.toFixed(1)}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" height={36} />
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={chartData} margin={{ top: 0, right: 10, left: 0, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis
+              dataKey="stynumber"
+              stroke="var(--muted-foreground)"
+              label={{ value: "Semester", position: "bottom", fill: "var(--muted-foreground)" }}
+              tickFormatter={(value) => `${value}`}
+            />
+            <YAxis
+              stroke="var(--muted-foreground)"
+              domain={[0, 10]}
+              ticks={[0, 2, 4, 6, 8, 10]}
+              tickFormatter={(value) => value.toFixed(1)}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend verticalAlign="top" height={36} />
 
-          {/* CGPA Line (non-draggable) - rendered first so it appears behind */}
-          <Line
-            type="monotone"
-            dataKey="cgpa"
-            stroke="var(--chart-2)"
-            name="CGPA"
-            strokeWidth={2}
-            dot={{ fill: "var(--chart-2)", r: 4 }}
-          />
+            {/* CGPA Line (non-draggable) - rendered first so it appears behind */}
+            <Line
+              type="monotone"
+              dataKey="cgpa"
+              stroke="var(--chart-2)"
+              name="CGPA"
+              strokeWidth={2}
+              dot={{ fill: "var(--chart-2)", r: 4 }}
+            />
 
-          {/* SGPA Line with draggable dots - rendered last so dots are on top */}
-          <Line
-            type="monotone"
-            dataKey="sgpa"
-            stroke="var(--chart-1)"
-            name="SGPA"
-            strokeWidth={2}
-            dot={(props) => (
-              <DraggableDot
-                {...props}
-                onDragStart={handleDragStart}
-                onDrag={handleDrag}
-                onDragEnd={handleDragEnd}
-                isDragging={dragState.isDragging && dragState.draggedIndex === props.index}
-              />
-            )}
-            activeDot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            {/* SGPA Line with draggable dots - rendered last so dots are on top */}
+            <Line
+              type="monotone"
+              dataKey="sgpa"
+              stroke="var(--chart-1)"
+              name="SGPA"
+              strokeWidth={2}
+              dot={(props) => (
+                <DraggableDot
+                  {...props}
+                  onDragStart={handleDragStart}
+                  onDrag={handleDrag}
+                  onDragEnd={handleDragEnd}
+                  isDragging={dragState.isDragging && dragState.draggedIndex === props.index}
+                />
+              )}
+              activeDot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Display current values */}
@@ -218,11 +215,13 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
           <div key={idx} className="flex justify-between p-2 rounded bg-muted/50">
             <span className="font-medium">Sem {sem.stynumber}:</span>
             <span>
-              SGPA: <span className="font-semibold" style={{ color: "var(--chart-1)" }}>
+              SGPA:{" "}
+              <span className="font-semibold" style={{ color: "var(--chart-1)" }}>
                 {sem.sgpa.toFixed(1)}
               </span>
               {" | "}
-              CGPA: <span className="font-semibold" style={{ color: "var(--chart-2)" }}>
+              CGPA:{" "}
+              <span className="font-semibold" style={{ color: "var(--chart-2)" }}>
                 {sem.cgpa.toFixed(1)}
               </span>
             </span>

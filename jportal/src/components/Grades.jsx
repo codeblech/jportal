@@ -386,11 +386,14 @@ export default function Grades({
               </div>
             ) : isInteractiveMode ? (
               <>
-                <div className="w-full flex justify-end mb-2 max-w-4xl">
+                <div className="w-full flex justify-between items-center gap-2 mb-2 max-w-4xl">
+                  <div className="text-sm text-muted-foreground">
+                    Drag the SGPA dots vertically to see how CGPA changes
+                  </div>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="cursor-pointer"
+                    className="cursor-pointer flex-shrink-0"
                     onClick={() => {
                       setIsInteractiveMode(false);
                       setModifiedSemesterData(null);
@@ -449,14 +452,8 @@ export default function Grades({
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend verticalAlign="top" height={36} />
-                      <Line
-                        type="monotone"
-                        dataKey="sgpa"
-                        stroke="var(--chart-1)"
-                        name="SGPA"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--chart-1)" }}
-                      />
+
+                      {/* CGPA Line - rendered first so it appears behind */}
                       <Line
                         type="monotone"
                         dataKey="cgpa"
@@ -464,6 +461,16 @@ export default function Grades({
                         name="CGPA"
                         strokeWidth={2}
                         dot={{ fill: "var(--chart-2)" }}
+                      />
+
+                      {/* SGPA Line - rendered last so it appears on top */}
+                      <Line
+                        type="monotone"
+                        dataKey="sgpa"
+                        stroke="var(--chart-1)"
+                        name="SGPA"
+                        strokeWidth={2}
+                        dot={{ fill: "var(--chart-1)" }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
