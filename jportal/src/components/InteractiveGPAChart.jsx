@@ -32,17 +32,10 @@ const recalculateCGPA = (semesterData, modifiedIndex, newSGPA) => {
 
 // Custom dot component that can be dragged
 const DraggableDot = ({ cx, cy, payload, index, onDragStart, onDrag, onDragEnd, isDragging }) => {
-  const handleMouseDown = (e) => {
+  const handlePointerDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
     onDragStart(index, e.clientY);
-  };
-
-  const handleTouchStart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const touch = e.touches[0];
-    onDragStart(index, touch.clientY);
   };
 
   return (
@@ -58,8 +51,7 @@ const DraggableDot = ({ cx, cy, payload, index, onDragStart, onDrag, onDragEnd, 
         transition: isDragging ? "none" : "all 0.2s",
         touchAction: "none",
       }}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
+      onPointerDown={handlePointerDown}
     />
   );
 };
@@ -106,16 +98,10 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     });
   };
 
-  const handleMouseMove = (e) => {
-    if (!dragState.isDragging) return;
-    handleDrag(e.clientY);
-  };
-
-  const handleTouchMove = (e) => {
+  const handlePointerMove = (e) => {
     if (!dragState.isDragging) return;
     e.preventDefault();
-    const touch = e.touches[0];
-    handleDrag(touch.clientY);
+    handleDrag(e.clientY);
   };
 
   const handleDrag = (clientY) => {
@@ -158,19 +144,17 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   // Add event listeners for drag operations
   React.useEffect(() => {
     if (dragState.isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleDragEnd);
-      window.addEventListener("touchmove", handleTouchMove, { passive: false });
-      window.addEventListener("touchend", handleDragEnd);
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handleDragEnd);
+      window.addEventListener("pointercancel", handleDragEnd);
 
       return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleDragEnd);
-        window.removeEventListener("touchmove", handleTouchMove);
-        window.removeEventListener("touchend", handleDragEnd);
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handleDragEnd);
+        window.removeEventListener("pointercancel", handleDragEnd);
       };
     }
-  }, [dragState.isDragging, handleMouseMove, handleTouchMove]);
+  }, [dragState.isDragging, handlePointerMove]);
 
   return (
     <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl" ref={chartRef}>
