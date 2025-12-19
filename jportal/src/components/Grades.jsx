@@ -3,8 +3,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GradeCard from "./GradeCard";
+import InteractiveGPAChart from "./InteractiveGPAChart";
 import { Button } from "@/components/ui/button";
-import { Download, ListFilter, SortAsc, SortDesc } from "lucide-react";
+import { Download, ListFilter, SortAsc, SortDesc, Play, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
@@ -108,6 +109,32 @@ export default function Grades({
     // sorting state for grade card list
     const [creditSort, setCreditSort] = useState("default"); // default, asc, desc
     const [gradeSort, setGradeSort] = useState("default"); // default, asc, desc
+
+    // interactive chart state
+    const [isInteractiveMode, setIsInteractiveMode] = useState(false);
+    const [modifiedSemesterData, setModifiedSemesterData] = useState(null);
+
+    // Custom tooltip component
+    const CustomTooltip = ({ active, payload }) => {
+      if (active && payload && payload.length) {
+        return (
+          <div
+            className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
+            style={{
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "4px",
+              padding: "4px 8px",
+              color: "var(--card-foreground)",
+            }}
+          >
+            <p style={{ margin: 0, color: "var(--chart-1)" }}>SGPA: {payload[0]?.value?.toFixed(1)}</p>
+            <p style={{ margin: 0, color: "var(--chart-2)" }}>CGPA: {payload[1]?.value?.toFixed(1)}</p>
+          </div>
+        );
+      }
+      return null;
+    };
 
     const nextSortState = (current) => (current === "default" ? "asc" : current === "asc" ? "desc" : "default");
 
@@ -357,8 +384,43 @@ export default function Grades({
                 <p className="text-xl">{gradesError}</p>
                 <p className="text-muted-foreground mt-2">Please check back later</p>
               </div>
+            ) : isInteractiveMode ? (
+              <>
+                <div className="w-full flex justify-end mb-2 max-w-4xl">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsInteractiveMode(false);
+                      setModifiedSemesterData(null);
+                    }}
+                    title="Exit interactive mode"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <InteractiveGPAChart
+                  semesterData={modifiedSemesterData || semesterData}
+                  onDataChange={setModifiedSemesterData}
+                />
+              </>
             ) : (
               <>
+                <div className="w-full flex justify-end mb-2 max-w-4xl">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsInteractiveMode(true);
+                      setModifiedSemesterData(semesterData.map(sem => ({ ...sem })));
+                    }}
+                    title="Enter interactive mode"
+                  >
+                    <Play className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl ">
                   <ResponsiveContainer width="100%" height={250}>
                     <LineChart
@@ -385,17 +447,7 @@ export default function Grades({
                         padding={{ top: 20, bottom: 20 }}
                         tickFormatter={(value) => value.toFixed(1)}
                       />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--card)",
-                          border: "none",
-                          borderRadius: "8px",
-                          color: "var(--card-foreground)",
-                        }}
-                        wrapperStyle={{
-                          boxShadow: "var(--shadow)",
-                        }}
-                      />
+                      <Tooltip content={<CustomTooltip />} />
                       <Legend verticalAlign="top" height={36} />
                       <Line
                         type="monotone"
