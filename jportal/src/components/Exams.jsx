@@ -81,7 +81,7 @@ export default function Exams({
 
   return (
     <div className="text-foreground font-sans">
-      <div className="sticky top-14 bg-background z-20">
+      <div className="sticky top-[var(--header-height)] bg-background z-20">
         <div className="pt-2 pb-4 px-3">
           <Select onValueChange={handleSemesterChange} value={selectedExamSem?.registration_id || ""}>
             <SelectTrigger className="bg-background text-foreground border-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground">

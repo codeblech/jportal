@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
@@ -104,9 +104,28 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
   const [isAttendanceMetaLoading, setIsAttendanceMetaLoading] = useState(true);
   const [isAttendanceDataLoading, setIsAttendanceDataLoading] = useState(true);
 
+  // Ref to measure header height
+  const headerRef = useRef(null);
+
+  // Measure header height and set CSS variable
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
+      }
+    };
+
+    // Update on mount and when window resizes
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []);
+
   return (
     <div className="min-h-screen pb-14 select-none">
-      <div className="sticky top-0 z-30 bg-background -mt-[2px]">
+      <div ref={headerRef} className="sticky top-0 z-30 bg-background">
         <Header setIsAuthenticated={setIsAuthenticated} setIsDemoMode={setIsDemoMode} />
       </div>
       <Routes>

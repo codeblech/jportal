@@ -166,7 +166,7 @@ export default function Subjects({
 
   return (
     <div className="text-foreground font-sans max-w-7xl mx-auto">
-      <div className="sticky top-14 bg-background/95 backdrop-blur-sm z-20">
+      <div className="sticky top-[var(--header-height)] bg-background/95 backdrop-blur-sm z-20">
         <div className="py-2 px-3">
           <Select onValueChange={handleSemesterChange} value={selectedSem?.registration_id} disabled={loading}>
             <SelectTrigger className="bg-background text-foreground border-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground">
