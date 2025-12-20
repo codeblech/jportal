@@ -1,14 +1,11 @@
 import React, { useState, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { recalculateCGPA } from "@/utils/gpaCalculations";
-import {
-  ANIMATION_CONFIG,
-  generateWaveParameters,
-  applyWaveAnimation
-} from "@/utils/chartAnimation";
+import { ANIMATION_CONFIG, generateWaveParameters, applyWaveAnimation } from "@/utils/chartAnimation";
 import { CHART_CONFIG, DRAG_CONFIG } from "@/utils/chartConstants";
 import DraggableDot from "./DraggableDot";
 import GPAChartTooltip from "./GPAChartTooltip";
+import { Card } from "@/components/ui/card";
 
 export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   const [chartData, setChartData] = useState(semesterData);
@@ -121,11 +118,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
 
         // Apply wave animation
         const progress = elapsed / ANIMATION_CONFIG.duration;
-        const updatedData = applyWaveAnimation(
-          originalDataRef.current,
-          waveParamsRef.current,
-          progress
-        );
+        const updatedData = applyWaveAnimation(originalDataRef.current, waveParamsRef.current, progress);
 
         setChartData(updatedData);
         if (onDataChange) {
@@ -202,20 +195,22 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
       {/* Display current values */}
       <div className="mt-4 grid grid-cols-2 gap-2 max-w-2xl mx-auto text-sm">
         {chartData.map((sem, idx) => (
-          <div key={idx} className="flex justify-between p-2 rounded bg-muted/50">
-            <span className="font-medium">Sem {sem.stynumber}:</span>
-            <span>
-              SGPA:{" "}
-              <span className="font-semibold" style={{ color: "var(--chart-1)" }}>
-                {sem.sgpa.toFixed(1)}
+          <Card className="shadow-lg cursor-pointer hover:bg-accent/50 transition-colors" key={idx}>
+            <div key={idx} className="flex justify-between p-2 rounded bg-muted/50">
+              <span className="font-medium">Sem {sem.stynumber}:</span>
+              <span>
+                SGPA:{" "}
+                <span className="font-semibold" style={{ color: "var(--chart-1)" }}>
+                  {sem.sgpa.toFixed(1)}
+                </span>
+                {" | "}
+                CGPA:{" "}
+                <span className="font-semibold" style={{ color: "var(--chart-2)" }}>
+                  {sem.cgpa.toFixed(1)}
+                </span>
               </span>
-              {" | "}
-              CGPA:{" "}
-              <span className="font-semibold" style={{ color: "var(--chart-2)" }}>
-                {sem.cgpa.toFixed(1)}
-              </span>
-            </span>
-          </div>
+            </div>
+          </Card>
         ))}
       </div>
     </div>
