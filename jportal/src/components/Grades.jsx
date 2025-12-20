@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import GradeCard from "./GradeCard";
 import InteractiveGPAChart from "./InteractiveGPAChart";
 import { Button } from "@/components/ui/button";
-import { Download, ListFilter, SortAsc, SortDesc, Play, X } from "lucide-react";
+import { Download, ListFilter, SortAsc, SortDesc, Play, X, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
@@ -146,7 +146,7 @@ export default function Grades({
         setGradeSort("default");
       }
     };
-    
+
     const toggleGradeSort = () => {
       const nextState = nextSortState(gradeSort);
       setGradeSort(nextState);
@@ -387,7 +387,8 @@ export default function Grades({
             ) : isInteractiveMode ? (
               <>
                 <div className="w-full flex justify-between items-center gap-2 mb-2 max-w-4xl">
-                  <div className="text-sm text-muted-foreground">
+                  <div className="flex flex-row gap-2 max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground">
+                    <Info className="w-4 h-4"/>
                     Drag the SGPA dots vertically to see how CGPA changes
                   </div>
                   <Button
@@ -417,7 +418,7 @@ export default function Grades({
                     className="cursor-pointer"
                     onClick={() => {
                       setIsInteractiveMode(true);
-                      setModifiedSemesterData(semesterData.map(sem => ({ ...sem })));
+                      setModifiedSemesterData(semesterData.map((sem) => ({ ...sem })));
                     }}
                     title="Enter interactive mode"
                   >
@@ -461,6 +462,7 @@ export default function Grades({
                         name="CGPA"
                         strokeWidth={2}
                         dot={{ fill: "var(--chart-2)" }}
+                        animationDuration={1500}
                       />
 
                       {/* SGPA Line - rendered last so it appears on top */}
@@ -471,6 +473,7 @@ export default function Grades({
                         name="SGPA"
                         strokeWidth={2}
                         dot={{ fill: "var(--chart-1)" }}
+                        animationDuration={1500}
                       />
                     </LineChart>
                   </ResponsiveContainer>

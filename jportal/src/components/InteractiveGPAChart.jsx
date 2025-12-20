@@ -1,60 +1,14 @@
 import React, { useState, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-
-// Helper function to recalculate CGPA based on modified SGPA
-const recalculateCGPA = (semesterData, modifiedIndex, newSGPA) => {
-  const updatedData = semesterData.map((sem, idx) => ({ ...sem }));
-
-  // Update the SGPA and earnedgradepoints for the modified semester
-  updatedData[modifiedIndex] = {
-    ...updatedData[modifiedIndex],
-    sgpa: newSGPA,
-    earnedgradepoints: newSGPA * updatedData[modifiedIndex].totalcoursecredit
-  };
-
-  // Recalculate CGPA for all semesters from the modified one onwards
-  for (let i = 0; i < updatedData.length; i++) {
-    let totalGradePoints = 0;
-    let totalCredits = 0;
-
-    // Sum up all grade points and credits from semester 1 to current semester
-    for (let j = 0; j <= i; j++) {
-      totalGradePoints += updatedData[j].earnedgradepoints;
-      totalCredits += updatedData[j].totalcoursecredit;
-    }
-
-    // Calculate CGPA
-    updatedData[i].cgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
-  }
-
-  return updatedData;
-};
-
-// Custom dot component that can be dragged
-const DraggableDot = ({ cx, cy, payload, index, onDragStart, onDrag, onDragEnd, isDragging }) => {
-  const handlePointerDown = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDragStart(index, e.clientY);
-  };
-
-  return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={isDragging ? 8 : 6}
-      fill="var(--chart-1)"
-      stroke="white"
-      strokeWidth={2}
-      style={{
-        cursor: "ns-resize",
-        transition: isDragging ? "none" : "all 0.2s",
-        touchAction: "none",
-      }}
-      onPointerDown={handlePointerDown}
-    />
-  );
-};
+import { recalculateCGPA } from "@/utils/gpaCalculations";
+import {
+  ANIMATION_CONFIG,
+  generateWaveParameters,
+  applyWaveAnimation
+} from "@/utils/chartAnimation";
+import { CHART_CONFIG, DRAG_CONFIG } from "@/utils/chartConstants";
+import DraggableDot from "./DraggableDot";
+import GPAChartTooltip from "./GPAChartTooltip";
 
 export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   const [chartData, setChartData] = useState(semesterData);
@@ -64,31 +18,16 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     startY: null,
     startValue: null,
   });
+  const [isAnimating, setIsAnimating] = useState(false);
   const chartRef = useRef(null);
-
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div
-          className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "4px",
-            padding: "4px 8px",
-            color: "var(--card-foreground)",
-          }}
-        >
-          <p style={{ margin: 0, color: "var(--chart-1)" }}>SGPA: {payload[1]?.value?.toFixed(1)}</p>
-          <p style={{ margin: 0, color: "var(--chart-2)" }}>CGPA: {payload[0]?.value?.toFixed(1)}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const animationFrameRef = useRef(null);
+  const originalDataRef = useRef(semesterData);
+  const waveParamsRef = useRef(null);
 
   const handleDragStart = (index, clientY) => {
+    // Don't allow dragging during intro animation
+    if (isAnimating) return;
+
     const semesterValue = chartData[index].sgpa;
     setDragState({
       isDragging: true,
@@ -107,20 +46,19 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   const handleDrag = (clientY) => {
     if (!dragState.isDragging || dragState.draggedIndex === null) return;
 
-    const chartHeight = 250; // Match the chart height
     const deltaY = dragState.startY - clientY;
 
-    // Calculate sensitivity: chart height maps to 0-10 SGPA range
-    const sensitivity = 10 / chartHeight;
+    // Calculate sensitivity: chart height maps to SGPA range
+    const sensitivity = (DRAG_CONFIG.maxSGPA - DRAG_CONFIG.minSGPA) / DRAG_CONFIG.chartHeight;
     const deltaValue = deltaY * sensitivity;
 
     let newValue = dragState.startValue + deltaValue;
 
-    // Clamp between 0 and 10
-    newValue = Math.max(0, Math.min(10, newValue));
+    // Clamp between min and max SGPA
+    newValue = Math.max(DRAG_CONFIG.minSGPA, Math.min(DRAG_CONFIG.maxSGPA, newValue));
 
-    // Round to 1 decimal place (multiples of 0.1)
-    newValue = Math.round(newValue * 10) / 10;
+    // Round to specified precision
+    newValue = Math.round(newValue / DRAG_CONFIG.precision) * DRAG_CONFIG.precision;
 
     // Recalculate CGPA based on new SGPA
     const updatedData = recalculateCGPA(chartData, dragState.draggedIndex, newValue);
@@ -156,11 +94,63 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     }
   }, [dragState.isDragging, handlePointerMove]);
 
+  // Dancing animation on mount to show interactivity
+  React.useEffect(() => {
+    const startTime = Date.now();
+
+    // Generate random wave parameters for each dot
+    if (!waveParamsRef.current) {
+      waveParamsRef.current = generateWaveParameters(originalDataRef.current.length);
+    }
+
+    const startAnimation = setTimeout(() => {
+      setIsAnimating(true);
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime - ANIMATION_CONFIG.chartAnimationDelay;
+
+        if (elapsed >= ANIMATION_CONFIG.duration) {
+          // Animation complete - reset to original values
+          setChartData(originalDataRef.current);
+          setIsAnimating(false);
+          if (onDataChange) {
+            onDataChange(originalDataRef.current);
+          }
+          return;
+        }
+
+        // Apply wave animation
+        const progress = elapsed / ANIMATION_CONFIG.duration;
+        const updatedData = applyWaveAnimation(
+          originalDataRef.current,
+          waveParamsRef.current,
+          progress
+        );
+
+        setChartData(updatedData);
+        if (onDataChange) {
+          onDataChange(updatedData);
+        }
+
+        animationFrameRef.current = requestAnimationFrame(animate);
+      };
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    }, ANIMATION_CONFIG.chartAnimationDelay);
+
+    return () => {
+      clearTimeout(startAnimation);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl" ref={chartRef}>
       <div style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData} margin={{ top: 0, right: 10, left: 0, bottom: 20 }}>
+        <ResponsiveContainer width="100%" height={CHART_CONFIG.height}>
+          <LineChart data={chartData} margin={CHART_CONFIG.margin}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="stynumber"
@@ -170,11 +160,11 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
             />
             <YAxis
               stroke="var(--muted-foreground)"
-              domain={[0, 10]}
-              ticks={[0, 2, 4, 6, 8, 10]}
+              domain={CHART_CONFIG.yAxisDomain}
+              ticks={CHART_CONFIG.yAxisTicks}
               tickFormatter={(value) => value.toFixed(1)}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<GPAChartTooltip />} />
             <Legend verticalAlign="top" height={36} />
 
             {/* CGPA Line (non-draggable) - rendered first so it appears behind */}
