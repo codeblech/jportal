@@ -4,43 +4,180 @@ import { Button } from "./ui/button";
 import LogoutIcon from "@/../public/icons/logout.svg?react";
 import { Link } from "react-router-dom";
 import { ChartNoAxesCombined } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 const FairyLights = () => {
-  const lights = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    color: ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4ecdc4', '#ff8fa3', '#a8e6cf'][i % 6],
-    delay: i * 0.15,
-  }));
+  const [textMetrics, setTextMetrics] = useState(null);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    const measureText = () => {
+      const element = textRef.current;
+      const computedStyle = window.getComputedStyle(element);
+      const fontSize = parseFloat(computedStyle.fontSize);
+
+      // Get the parent container's padding
+      const container = element.parentElement;
+      const containerStyle = window.getComputedStyle(container);
+      const paddingLeft = parseFloat(containerStyle.paddingLeft) || 0;
+
+      // Use canvas to measure text accurately
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = `${computedStyle.fontWeight} ${fontSize}px ${computedStyle.fontFamily}`;
+
+      const text = "JPortal";
+      let totalWidth = 0;
+      const charWidths = [];
+
+      for (const char of text) {
+        const metrics = ctx.measureText(char);
+        charWidths.push({
+          char,
+          width: metrics.width,
+          x: totalWidth
+        });
+        totalWidth += metrics.width;
+      }
+
+      const lChar = charWidths.find(c => c.char === 'l');
+
+      setTextMetrics({
+        totalWidth,
+        charWidths,
+        lPosition: lChar ? lChar.x + lChar.width : totalWidth,
+        fontSize,
+        paddingLeft
+      });
+    };
+
+    // Measure after fonts are loaded
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measureText);
+    } else {
+      // Fallback for browsers without Font Loading API
+      setTimeout(measureText, 100);
+    }
+
+    // Re-measure on font changes
+    const observer = new MutationObserver(measureText);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Generate light positions along the text width
+  const generateLights = () => {
+    if (!textMetrics) {
+      // Fallback positions while measuring
+      return Array.from({ length: 12 }, (_, i) => ({
+        id: i,
+        color: ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4ecdc4', '#ff8fa3', '#a8e6cf'][i % 6],
+        delay: i * 0.15,
+        x: -10 + (i * 11),
+        y: 20 + Math.sin(i * 0.8) * 5
+      }));
+    }
+
+    const { lPosition, paddingLeft } = textMetrics;
+    const numLights = 14;
+    const lights = [];
+    const offset = paddingLeft || 0;
+
+    for (let i = 0; i < numLights; i++) {
+      let x, y;
+
+      if (i < numLights - 3) {
+        // Distribute lights along the text width
+        const progress = i / (numLights - 4);
+        x = offset - 10 + (progress * (lPosition + 10));
+        y = 20 + Math.sin(i * 0.6) * 4;
+      } else {
+        // Last 3 lights dangle down from 'l'
+        const dangleIndex = i - (numLights - 3);
+        x = offset + lPosition + dangleIndex * 3;
+        y = 20 + dangleIndex * 8;
+      }
+
+      lights.push({
+        id: i,
+        color: ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4ecdc4', '#ff8fa3', '#a8e6cf'][i % 6],
+        delay: i * 0.15,
+        x,
+        y
+      });
+    }
+
+    return lights;
+  };
+
+  // Generate SVG path for the wire
+  const generateWirePath = () => {
+    if (!textMetrics) {
+      return "M -10,20 Q 30,10 60,15 T 110,18 Q 115,20 118,28";
+    }
+
+    const { lPosition, paddingLeft } = textMetrics;
+    const offset = paddingLeft || 0;
+    const numPoints = 8;
+    let path = `M ${offset - 10},20`;
+
+    for (let i = 1; i < numPoints; i++) {
+      const progress = i / (numPoints - 1);
+      const x = offset - 10 + (progress * (lPosition + 10));
+      const y = 20 + Math.sin(i * 0.6) * 4;
+
+      if (i === 1) {
+        path += ` Q ${x},${y - 8} ${x},${y}`;
+      } else {
+        path += ` T ${x},${y}`;
+      }
+    }
+
+    // Add dangle path
+    const dangleStart = offset + lPosition;
+    path += ` Q ${dangleStart + 2},${22} ${dangleStart + 3},${28}`;
+    path += ` T ${dangleStart + 6},${36}`;
+    path += ` T ${dangleStart + 9},${44}`;
+
+    return path;
+  };
+
+  const lights = generateLights();
+  const wirePath = generateWirePath();
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-visible">
-      <svg className="absolute w-full h-full" style={{ top: '-8px', overflow: 'visible' }}>
-        {/* Wire path - now dangles down at the end */}
-        <path
-          d="M -10,20 Q 30,10 60,15 T 110,18 Q 115,20 118,28"
-          stroke="rgba(100, 100, 100, 0.3)"
-          strokeWidth="1.5"
-          fill="none"
-        />
-        {/* Lights */}
-        {lights.map((light) => {
-          let x, y;
-          if (light.id < 10) {
-            // Regular horizontal distribution for first 10 lights
-            x = -10 + (light.id * 11);
-            y = 20 + Math.sin(light.id * 0.8) * 5;
-          } else {
-            // Last 2 lights dangle down
-            x = 110 + (light.id - 10) * 4;
-            y = 18 + (light.id - 9) * 5;
-          }
+    <>
+      {/* Hidden reference element for text measurement */}
+      <span
+        ref={textRef}
+        className="text-2xl font-bold lg:text-3xl font-sans absolute opacity-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        JPortal
+      </span>
 
-          return (
+      <div className="absolute inset-0 pointer-events-none overflow-visible">
+        <svg className="absolute w-full h-full" style={{ top: '-8px', overflow: 'visible' }}>
+          {/* Wire path */}
+          <path
+            d={wirePath}
+            stroke="rgba(100, 100, 100, 0.3)"
+            strokeWidth="1.5"
+            fill="none"
+          />
+          {/* Lights */}
+          {lights.map((light) => (
             <g key={light.id}>
               {/* Light glow */}
               <circle
-                cx={x}
-                cy={y}
+                cx={light.x}
+                cy={light.y}
                 r="3"
                 fill={light.color}
                 opacity="0.6"
@@ -51,8 +188,8 @@ const FairyLights = () => {
               />
               {/* Light bulb */}
               <circle
-                cx={x}
-                cy={y}
+                cx={light.x}
+                cy={light.y}
                 r="2"
                 fill={light.color}
                 style={{
@@ -62,18 +199,18 @@ const FairyLights = () => {
                 }}
               />
             </g>
-          );
-        })}
-      </svg>
-      <style>
-        {`
-          @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-          }
-        `}
-      </style>
-    </div>
+          ))}
+        </svg>
+        <style>
+          {`
+            @keyframes twinkle {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.3; }
+            }
+          `}
+        </style>
+      </div>
+    </>
   );
 };
 
