@@ -9,7 +9,7 @@ import { Download, ListFilter, SortAsc, SortDesc, Play, X, Info } from "lucide-r
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
-import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.16/dist/jsjiit.esm.js";
+import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
 
 export default function Grades({
