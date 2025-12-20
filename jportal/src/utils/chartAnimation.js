@@ -5,7 +5,7 @@ import { recalculateAllCGPAs } from './gpaCalculations';
  */
 export const ANIMATION_CONFIG = {
   chartAnimationDelay: 1520, // Wait for Recharts initial animation
-  duration: 2000, // Total animation duration in ms
+  duration: 1500, // Total animation duration in ms
   easeOutStartProgress: 0.8, // When to start easing out (80% through)
 };
 

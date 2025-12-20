@@ -11,6 +11,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
 import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Grades({
   w,
@@ -384,124 +385,142 @@ export default function Grades({
                 <p className="text-xl">{gradesError}</p>
                 <p className="text-muted-foreground mt-2">Please check back later</p>
               </div>
-            ) : isInteractiveMode ? (
-              <>
-                <div className="w-full flex justify-between items-center gap-2 mb-2 max-w-4xl">
-                  <div className="flex flex-row gap-2 max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground">
-                    <Info className="w-4 h-4"/>
-                    Drag the SGPA dots vertically to see how CGPA changes
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="cursor-pointer flex-shrink-0"
-                    onClick={() => {
-                      setIsInteractiveMode(false);
-                      setModifiedSemesterData(null);
-                    }}
-                    title="Exit interactive mode"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <InteractiveGPAChart
-                  semesterData={modifiedSemesterData || semesterData}
-                  onDataChange={setModifiedSemesterData}
-                />
-              </>
             ) : (
-              <>
-                <div className="w-full flex justify-end mb-2 max-w-4xl">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsInteractiveMode(true);
-                      setModifiedSemesterData(semesterData.map((sem) => ({ ...sem })));
-                    }}
-                    title="Enter interactive mode"
+              <AnimatePresence mode="wait">
+                {isInteractiveMode ? (
+                  <motion.div
+                    key="interactive"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}
+                    className="w-full flex flex-col items-center"
                   >
-                    <Play className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl ">
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart
-                      data={semesterData}
-                      margin={{
-                        top: 0,
-                        right: 10,
-                        left: 0,
-                        bottom: 20,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis
-                        dataKey="stynumber"
-                        stroke="var(--muted-foreground)"
-                        label={{ value: "Semester", position: "bottom", fill: "var(--muted-foreground)" }}
-                        tickFormatter={(value) => `${value}`}
-                      />
-                      <YAxis
-                        stroke="var(--muted-foreground)"
-                        domain={["dataMin", "dataMax"]}
-                        ticks={undefined}
-                        tickCount={5}
-                        padding={{ top: 20, bottom: 20 }}
-                        tickFormatter={(value) => value.toFixed(1)}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend verticalAlign="top" height={36} />
-
-                      {/* CGPA Line - rendered first so it appears behind */}
-                      <Line
-                        type="monotone"
-                        dataKey="cgpa"
-                        stroke="var(--chart-2)"
-                        name="CGPA"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--chart-2)" }}
-                        animationDuration={1500}
-                      />
-
-                      {/* SGPA Line - rendered last so it appears on top */}
-                      <Line
-                        type="monotone"
-                        dataKey="sgpa"
-                        stroke="var(--chart-1)"
-                        name="SGPA"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--chart-1)" }}
-                        animationDuration={1500}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="space-y-2 w-full max-w-4xl">
-                  {semesterData.map((sem) => (
-                    <div key={sem.stynumber} className="flex justify-between items-center py-1 border-b border-border">
-                      <div className="flex-1">
-                        <h2 className="text-sm font-semibold">Semester {sem.stynumber}</h2>
-                        <p className="text-sm text-muted-foreground">
-                          GP: {sem.earnedgradepoints.toFixed(1)}/{sem.totalcoursecredit * 10}
-                        </p>
+                    <div className="w-full flex justify-between items-center gap-2 mb-2 max-w-4xl">
+                      <div className="flex flex-row gap-2 max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground">
+                        <Info className="w-4 h-4"/>
+                        Drag the SGPA dots vertically to see how CGPA changes
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-center">
-                          <div className="text-xl font-bold text-chart-1">{sem.sgpa}</div>
-                          <div className="text-xs text-muted-foreground">SGPA</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-xl font-bold text-chart-2">{sem.cgpa}</div>
-                          <div className="text-xs text-muted-foreground">CGPA</div>
-                        </div>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="cursor-pointer flex-shrink-0"
+                        onClick={() => {
+                          setIsInteractiveMode(false);
+                          setModifiedSemesterData(null);
+                        }}
+                        title="Exit interactive mode"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
-                  ))}
-                </div>
-              </>
+                    <InteractiveGPAChart
+                      semesterData={modifiedSemesterData || semesterData}
+                      onDataChange={setModifiedSemesterData}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="static"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}
+                    className="w-full flex flex-col items-center"
+                  >
+                    <div className="w-full flex justify-end mb-2 max-w-4xl">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setIsInteractiveMode(true);
+                          setModifiedSemesterData(semesterData.map((sem) => ({ ...sem })));
+                        }}
+                        title="Enter interactive mode"
+                      >
+                        <Play className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl ">
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart
+                          data={semesterData}
+                          margin={{
+                            top: 0,
+                            right: 10,
+                            left: 0,
+                            bottom: 20,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                          <XAxis
+                            dataKey="stynumber"
+                            stroke="var(--muted-foreground)"
+                            label={{ value: "Semester", position: "bottom", fill: "var(--muted-foreground)" }}
+                            tickFormatter={(value) => `${value}`}
+                          />
+                          <YAxis
+                            stroke="var(--muted-foreground)"
+                            domain={["dataMin", "dataMax"]}
+                            ticks={undefined}
+                            tickCount={5}
+                            padding={{ top: 20, bottom: 20 }}
+                            tickFormatter={(value) => value.toFixed(1)}
+                          />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend verticalAlign="top" height={36} />
+
+                          {/* CGPA Line - rendered first so it appears behind */}
+                          <Line
+                            type="monotone"
+                            dataKey="cgpa"
+                            stroke="var(--chart-2)"
+                            name="CGPA"
+                            strokeWidth={2}
+                            dot={{ fill: "var(--chart-2)" }}
+                            animationDuration={1500}
+                          />
+
+                          {/* SGPA Line - rendered last so it appears on top */}
+                          <Line
+                            type="monotone"
+                            dataKey="sgpa"
+                            stroke="var(--chart-1)"
+                            name="SGPA"
+                            strokeWidth={2}
+                            dot={{ fill: "var(--chart-1)" }}
+                            animationDuration={1500}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    <div className="space-y-2 w-full max-w-4xl">
+                      {semesterData.map((sem) => (
+                        <div key={sem.stynumber} className="flex justify-between items-center py-1 border-b border-border">
+                          <div className="flex-1">
+                            <h2 className="text-sm font-semibold">Semester {sem.stynumber}</h2>
+                            <p className="text-sm text-muted-foreground">
+                              GP: {sem.earnedgradepoints.toFixed(1)}/{sem.totalcoursecredit * 10}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <div className="text-center">
+                              <div className="text-xl font-bold text-chart-1">{sem.sgpa}</div>
+                              <div className="text-xs text-muted-foreground">SGPA</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-xl font-bold text-chart-2">{sem.cgpa}</div>
+                              <div className="text-xs text-muted-foreground">CGPA</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             )}
             <div className="w-full flex justify-end my-4 max-w-4xl">
               <Button
