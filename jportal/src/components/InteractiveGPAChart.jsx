@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea } from "recharts";
 import { recalculateCGPA } from "@/utils/gpaCalculations";
 import { ANIMATION_CONFIG, generateWaveParameters, applyWaveAnimation } from "@/utils/chartAnimation";
 import { CHART_CONFIG, DRAG_CONFIG } from "@/utils/chartConstants";
@@ -226,6 +226,25 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
             <Tooltip content={<GPAChartTooltip />} />
             <Legend verticalAlign="top" height={36} />
 
+            {/* Background area for projected semesters */}
+            {(() => {
+              const firstSpeculativeIndex = chartData.findIndex(sem => sem.isSpeculative);
+              if (firstSpeculativeIndex > 0) {
+                const lastActualSem = chartData[firstSpeculativeIndex - 1];
+                const lastSem = chartData[chartData.length - 1];
+                return (
+                  <ReferenceArea
+                    x1={lastActualSem.stynumber}
+                    x2={lastSem.stynumber}
+                    fill="var(--muted)"
+                    fillOpacity={0.3}
+                    strokeOpacity={0}
+                  />
+                );
+              }
+              return null;
+            })()}
+
             {/* CGPA Line (non-draggable) - rendered first so it appears behind */}
             <Line
               type="monotone"
@@ -233,7 +252,31 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
               stroke="var(--chart-2)"
               name="CGPA"
               strokeWidth={2}
-              dot={{ fill: "var(--chart-2)", r: 4 }}
+              dot={(props) => {
+                const isSpeculative = chartData[props.index]?.isSpeculative;
+                if (isSpeculative) {
+                  return (
+                    <circle
+                      cx={props.cx}
+                      cy={props.cy}
+                      r={4}
+                      fill="transparent"
+                      stroke="var(--chart-2)"
+                      strokeWidth={2}
+                      opacity={0.5}
+                      strokeDasharray="2,2"
+                    />
+                  );
+                }
+                return (
+                  <circle
+                    cx={props.cx}
+                    cy={props.cy}
+                    r={4}
+                    fill="var(--chart-2)"
+                  />
+                );
+              }}
             />
 
             {/* SGPA Line with draggable dots - rendered last so dots are on top */}
@@ -243,15 +286,19 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
               stroke="var(--chart-1)"
               name="SGPA"
               strokeWidth={2}
-              dot={(props) => (
-                <DraggableDot
-                  {...props}
-                  onDragStart={handleDragStart}
-                  onDrag={handleDrag}
-                  onDragEnd={handleDragEnd}
-                  isDragging={dragState.isDragging && dragState.draggedIndex === props.index}
-                />
-              )}
+              dot={(props) => {
+                const isSpeculative = chartData[props.index]?.isSpeculative;
+                return (
+                  <DraggableDot
+                    {...props}
+                    onDragStart={handleDragStart}
+                    onDrag={handleDrag}
+                    onDragEnd={handleDragEnd}
+                    isDragging={dragState.isDragging && dragState.draggedIndex === props.index}
+                    isSpeculative={isSpeculative}
+                  />
+                );
+              }}
               activeDot={false}
             />
           </LineChart>
@@ -264,16 +311,22 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
           const sgpaPercentage = (sem.sgpa / DRAG_CONFIG.maxSGPA) * 100;
           const cgpaPercentage = (sem.cgpa / DRAG_CONFIG.maxSGPA) * 100;
           const isDraggingThisCard = cardDragState.isDragging && cardDragState.draggedIndex === idx;
+          const isSpeculative = sem.isSpeculative === true;
 
           return (
             <div key={idx} className="relative">
               {/* Semester number label */}
-              <div className="max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground mb-1 ml-1">
+              <div className="max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground mb-1 ml-1 flex items-center gap-1.5">
                 Sem {sem.stynumber}
+                {isSpeculative && (
+                  <span className="text-[0.6rem] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-dashed border-border">
+                    Projected
+                  </span>
+                )}
               </div>
 
               {/* Card with progress bars */}
-              <Card className="shadow-lg overflow-hidden">
+              <Card className={`shadow-lg overflow-hidden ${isSpeculative ? 'border-dashed opacity-70' : ''}`}>
                 <div className="space-y-0 p-0">
                   {/* SGPA Progress Bar (Interactive) */}
                   <div

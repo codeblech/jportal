@@ -5,7 +5,7 @@
  * Used in the InteractiveGPAChart for interactive data manipulation
  */
 
-const DraggableDot = ({ cx, cy, index, onDragStart, isDragging }) => {
+const DraggableDot = ({ cx, cy, index, onDragStart, isDragging, isSpeculative }) => {
   const handlePointerDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -20,6 +20,8 @@ const DraggableDot = ({ cx, cy, index, onDragStart, isDragging }) => {
       fill="var(--chart-1)"
       stroke="white"
       strokeWidth={2}
+      opacity={isSpeculative ? 0.5 : 1}
+      strokeDasharray={isSpeculative ? "2,2" : "none"}
       style={{
         cursor: "ns-resize",
         transition: isDragging ? "none" : "all 0.2s",

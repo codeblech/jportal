@@ -64,7 +64,76 @@ export default function Grades({
         }
 
         setGradesData(data);
-        setSemesterData(data.semesterList);
+
+        // Fetch speculative semesters (n+1, n+2) if available
+        const actualSemesters = data.semesterList;
+        const latestSemester = actualSemesters[actualSemesters.length - 1];
+        const n = latestSemester?.stynumber || 0;
+
+        // Calculate average SGPA from actual semesters to use as default for projected
+        const averageSGPA = actualSemesters.length > 0
+          ? actualSemesters.reduce((sum, sem) => sum + sem.sgpa, 0) / actualSemesters.length
+          : 0;
+
+        const speculativeSemesters = [];
+
+        // Try to fetch subject choices for n+1 and n+2
+        try {
+          const registeredSemesters = await w.get_registered_semesters();
+
+          for (const regSem of registeredSemesters) {
+            try {
+              const choices = await w.get_subject_choices(regSem);
+
+              // Check if this is a future semester by examining stynumber
+              if (choices?.subjectpreferencegrid?.length > 0) {
+                const semNumber = choices.subjectpreferencegrid[0].stynumber;
+
+                // Only add if it's n+1 or n+2
+                if (semNumber === n + 1 || semNumber === n + 2) {
+                  // Calculate total credits from allotted subjects
+                  const allottedSubjects = choices.subjectpreferencegrid.filter(s => s.running === "Y");
+                  const totalCredits = allottedSubjects.reduce((sum, s) => sum + (s.credits || 0), 0);
+
+                  // Only add if we have credits
+                  if (totalCredits > 0) {
+                    speculativeSemesters.push({
+                      stynumber: semNumber,
+                      sgpa: averageSGPA,
+                      cgpa: latestSemester.cgpa, // Will be recalculated
+                      earnedgradepoints: averageSGPA * totalCredits,
+                      totalcoursecredit: totalCredits,
+                      isSpeculative: true
+                    });
+                  }
+                }
+              }
+            } catch (err) {
+              // Silently skip if subject choices not available
+              continue;
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch speculative semesters:", err);
+        }
+
+        // Sort speculative semesters by stynumber and merge with actual data
+        speculativeSemesters.sort((a, b) => a.stynumber - b.stynumber);
+        let mergedSemesters = [...actualSemesters, ...speculativeSemesters];
+
+        // Recalculate CGPA for speculative semesters based on cumulative grade points
+        if (speculativeSemesters.length > 0) {
+          let totalGradePoints = actualSemesters.reduce((sum, sem) => sum + sem.earnedgradepoints, 0);
+          let totalCredits = actualSemesters.reduce((sum, sem) => sum + sem.totalcoursecredit, 0);
+
+          for (let i = actualSemesters.length; i < mergedSemesters.length; i++) {
+            totalGradePoints += mergedSemesters[i].earnedgradepoints;
+            totalCredits += mergedSemesters[i].totalcoursecredit;
+            mergedSemesters[i].cgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+          }
+        }
+
+        setSemesterData(mergedSemesters);
       } catch (err) {
         if (err.message.includes("Unexpected end of JSON input")) {
           setGradesError("Grade sheet is not available");
@@ -445,7 +514,7 @@ export default function Grades({
                     <div className="mb-4 rounded-lg pb-2 w-full max-w-4xl ">
                       <ResponsiveContainer width="100%" height={250}>
                         <LineChart
-                          data={semesterData}
+                          data={semesterData.filter(sem => !sem.isSpeculative)}
                           margin={{
                             top: 0,
                             right: 10,
@@ -497,7 +566,7 @@ export default function Grades({
                     </div>
 
                     <div className="space-y-2 w-full max-w-4xl">
-                      {semesterData.map((sem) => (
+                      {semesterData.filter(sem => !sem.isSpeculative).map((sem) => (
                         <div key={sem.stynumber} className="flex justify-between items-center py-1 border-b border-border">
                           <div className="flex-1">
                             <h2 className="text-sm font-semibold">Semester {sem.stynumber}</h2>
