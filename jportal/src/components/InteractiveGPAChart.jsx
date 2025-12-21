@@ -196,7 +196,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
       <div className="mt-4 grid grid-cols-2 gap-2 max-w-2xl mx-auto text-sm">
         {chartData.map((sem, idx) => (
           <Card className="shadow-lg cursor-pointer hover:bg-accent/50 transition-colors" key={idx}>
-            <div key={idx} className="flex justify-between p-2 rounded bg-muted/50">
+            <div key={idx} className="flex justify-between p-2">
               <span className="font-medium">Sem {sem.stynumber}:</span>
               <span>
                 SGPA:{" "}
