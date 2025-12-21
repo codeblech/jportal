@@ -15,6 +15,10 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     startY: null,
     startValue: null,
   });
+  const [cardDragState, setCardDragState] = useState({
+    isDragging: false,
+    draggedIndex: null,
+  });
   const [isAnimating, setIsAnimating] = useState(false);
   const chartRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -76,6 +80,55 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     });
   };
 
+  // Card progress bar drag handlers
+  const handleCardDragStart = (index, e) => {
+    // Don't allow dragging during intro animation
+    if (isAnimating) return;
+
+    setCardDragState({
+      isDragging: true,
+      draggedIndex: index,
+    });
+
+    // Immediately update based on click position
+    handleCardDrag(index, e);
+  };
+
+  const handleCardDrag = (index, e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+
+    // Calculate new SGPA value (0 to 10 range)
+    let newValue = percentage * DRAG_CONFIG.maxSGPA;
+
+    // Round to specified precision
+    newValue = Math.round(newValue / DRAG_CONFIG.precision) * DRAG_CONFIG.precision;
+
+    // Recalculate CGPA based on new SGPA
+    const updatedData = recalculateCGPA(chartData, index, newValue);
+    setChartData(updatedData);
+
+    // Notify parent component of changes
+    if (onDataChange) {
+      onDataChange(updatedData);
+    }
+  };
+
+  const handleCardPointerMove = (index, e) => {
+    if (!cardDragState.isDragging || cardDragState.draggedIndex !== index) return;
+    e.preventDefault();
+    handleCardDrag(index, e);
+  };
+
+  const handleCardDragEnd = () => {
+    setCardDragState({
+      isDragging: false,
+      draggedIndex: null,
+    });
+  };
+
   // Add event listeners for drag operations
   React.useEffect(() => {
     if (dragState.isDragging) {
@@ -90,6 +143,19 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
       };
     }
   }, [dragState.isDragging, handlePointerMove]);
+
+  // Add event listeners for card drag operations
+  React.useEffect(() => {
+    if (cardDragState.isDragging) {
+      window.addEventListener("pointerup", handleCardDragEnd);
+      window.addEventListener("pointercancel", handleCardDragEnd);
+
+      return () => {
+        window.removeEventListener("pointerup", handleCardDragEnd);
+        window.removeEventListener("pointercancel", handleCardDragEnd);
+      };
+    }
+  }, [cardDragState.isDragging]);
 
   // Dancing animation on mount to show interactivity
   React.useEffect(() => {
@@ -192,26 +258,79 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Display current values */}
-      <div className="mt-4 grid grid-cols-2 gap-2 max-w-2xl mx-auto text-sm">
-        {chartData.map((sem, idx) => (
-          <Card className="shadow-lg cursor-pointer hover:bg-accent/50 transition-colors" key={idx}>
-            <div key={idx} className="flex justify-between p-2">
-              <span className="font-medium">Sem {sem.stynumber}:</span>
-              <span>
-                SGPA:{" "}
-                <span className="font-semibold" style={{ color: "var(--chart-1)" }}>
-                  {sem.sgpa.toFixed(1)}
-                </span>
-                {" | "}
-                CGPA:{" "}
-                <span className="font-semibold" style={{ color: "var(--chart-2)" }}>
-                  {sem.cgpa.toFixed(1)}
-                </span>
-              </span>
+      {/* Display current values with interactive progress bars */}
+      <div className="mt-4 grid grid-cols-2 gap-3 max-w-2xl mx-auto">
+        {chartData.map((sem, idx) => {
+          const sgpaPercentage = (sem.sgpa / DRAG_CONFIG.maxSGPA) * 100;
+          const cgpaPercentage = (sem.cgpa / DRAG_CONFIG.maxSGPA) * 100;
+          const isDraggingThisCard = cardDragState.isDragging && cardDragState.draggedIndex === idx;
+
+          return (
+            <div key={idx} className="relative">
+              {/* Semester number label */}
+              <div className="max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground mb-1 ml-1">
+                Sem {sem.stynumber}
+              </div>
+
+              {/* Card with progress bars */}
+              <Card className="shadow-lg overflow-hidden">
+                <div className="space-y-0 p-0">
+                  {/* SGPA Progress Bar (Interactive) */}
+                  <div
+                    className={`relative rounded-t-lg overflow-hidden select-none transition-all ${
+                      isDraggingThisCard ? "h-8 opacity-60" : "h-6"
+                    }`}
+                    style={{
+                      cursor: isDraggingThisCard ? "ew-resize" : "pointer",
+                      touchAction: "none",
+                    }}
+                    onPointerDown={(e) => handleCardDragStart(idx, e)}
+                    onPointerMove={(e) => handleCardPointerMove(idx, e)}
+                  >
+                    {/* Background (empty part) */}
+                    <div className="absolute inset-0 bg-muted" />
+
+                    {/* Filled part (progress) */}
+                    <div
+                      className="absolute inset-y-0 left-0"
+                      style={{
+                        width: `${sgpaPercentage}%`,
+                        backgroundColor: "var(--chart-1)",
+                        transition: isDraggingThisCard || isAnimating ? "none" : "width 0.2s",
+                      }}
+                    />
+
+                    {/* Text overlay */}
+                    <div className="relative h-full flex items-center px-2 text-xs font-semibold text-chart-1 mix-blend-difference">
+                      SGPA: {sem.sgpa.toFixed(1)}
+                    </div>
+                  </div>
+
+                  {/* CGPA Progress Bar (Read-only) */}
+                  <div className="relative h-6 rounded-b-lg overflow-hidden">
+                    {/* Background (empty part) */}
+                    <div className="absolute inset-0 bg-muted" />
+
+                    {/* Filled part (progress) */}
+                    <div
+                      className="absolute inset-y-0 left-0"
+                      style={{
+                        width: `${cgpaPercentage}%`,
+                        backgroundColor: "var(--chart-2)",
+                        transition: isAnimating ? "none" : "width 0.2s",
+                      }}
+                    />
+
+                    {/* Text overlay */}
+                    <div className="relative h-full flex items-center px-2 text-xs font-semibold text-chart-2 mix-blend-difference">
+                      CGPA: {sem.cgpa.toFixed(1)}
+                    </div>
+                  </div>
+                </div>
+              </Card>
             </div>
-          </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
