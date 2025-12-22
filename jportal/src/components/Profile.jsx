@@ -17,6 +17,10 @@ export default function Profile({ w, profileData, setProfileData }) {
 	const [activeTab, setActiveTab] = useState("personal");
 	const [showProfilePhoto, setShowProfilePhoto] = useState(false);
 
+	// Fees and Fines state
+	const [feesData, setFeesData] = useState({ fines: [], summary: {} });
+	const [feesLoading, setFeesLoading] = useState(true);
+
 	useEffect(() => {
 		const fetchProfileData = async () => {
 			// Return early if data is already cached
@@ -38,6 +42,35 @@ export default function Profile({ w, profileData, setProfileData }) {
 
 		fetchProfileData();
 	}, [w, profileData, setProfileData]);
+
+	// Fetch fees data separately
+	useEffect(() => {
+		const fetchFeesData = async () => {
+			setFeesLoading(true);
+			try {
+				const [finesData, summaryData] = await Promise.all([
+					w.get_fines_msc_charges().catch((err) => {
+						if (err.message?.includes("NO APPROVED REQUEST FOUND")) {
+							return [];
+						}
+						throw err;
+					}),
+					w.get_fee_summary(),
+				]);
+
+				setFeesData({
+					fines: Array.isArray(finesData) ? finesData : [],
+					summary: summaryData || {},
+				});
+			} catch (error) {
+				console.error("Failed to fetch fees data for profile:", error);
+			} finally {
+				setFeesLoading(false);
+			}
+		};
+
+		fetchFeesData();
+	}, [w]);
 
 	if (loading) {
 		return (
@@ -374,7 +407,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 						<div className="text-center py-8">Loading fines data...</div>
 					) : finesArray.length > 0 ? (
 						<>
-							<div className="bg-card p-4 rounded-lg border shadow-lg border-l-4 border-l-orange-500">
+							<div className="bg-card p-4 rounded-lg border shadow-lg">
 								<div className="flex justify-between items-center">
 									<span className="font-semibold text-lg">Total Pending</span>
 									<span className="font-bold text-xl text-orange-600">
@@ -432,7 +465,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 					) : (
 						<>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-								<div className="bg-card p-4 rounded-lg border shadow-lg border-l-4 border-l-blue-500">
+								<div className="bg-card p-4 rounded-lg border shadow-lg">
 									<div className="text-muted-foreground text-sm font-medium">
 										Total Fee
 									</div>
@@ -440,7 +473,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 										{formatCurrency(totalFeeAmount)}
 									</div>
 								</div>
-								<div className="bg-card p-4 rounded-lg border shadow-lg border-l-4 border-l-green-500">
+								<div className="bg-card p-4 rounded-lg border shadow-lg">
 									<div className="text-muted-foreground text-sm font-medium">
 										Total Received
 									</div>
@@ -448,7 +481,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 										{formatCurrency(totalReceived)}
 									</div>
 								</div>
-								<div className="bg-card p-4 rounded-lg border shadow-lg border-l-4 border-l-red-500">
+								<div className="bg-card p-4 rounded-lg border shadow-lg">
 									<div className="text-muted-foreground text-sm font-medium">
 										Total Due
 									</div>
@@ -457,7 +490,7 @@ export default function Profile({ w, profileData, setProfileData }) {
 									</div>
 								</div>
 								{(advanceAmount > 0 || totalRefund > 0) && (
-									<div className="bg-card p-4 rounded-lg border shadow-lg border-l-4 border-l-purple-500">
+									<div className="bg-card p-4 rounded-lg border shadow-lg">
 										<div className="text-muted-foreground text-sm font-medium">
 											{advanceAmount > 0 ? "Advance" : "Refund"}
 										</div>
