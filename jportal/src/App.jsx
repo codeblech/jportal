@@ -25,7 +25,7 @@ import "./App.css";
 import {
 	WebPortal,
 	LoginError,
-} from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.22/dist/jsjiit.esm.js";
+} from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 
 import MockWebPortal from "./components/MockWebPortal";
 import { TriangleAlert } from "lucide-react";
