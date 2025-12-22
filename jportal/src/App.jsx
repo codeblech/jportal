@@ -40,6 +40,7 @@ const mockPortal = new MockWebPortal();
 
 // Create a wrapper component to use the useNavigate hook
 function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
+	const headerRef = useRef(null);
 	const [activeAttendanceTab, setActiveAttendanceTab] = useState("overview");
 	const [attendanceData, setAttendanceData] = useState({});
 	const [attendanceSemestersData, setAttendanceSemestersData] = useState(null);
@@ -115,6 +116,9 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
 	// Add these new states lifted from Attendance.jsx
 	const [isAttendanceMetaLoading, setIsAttendanceMetaLoading] = useState(true);
 	const [isAttendanceDataLoading, setIsAttendanceDataLoading] = useState(true);
+
+	// Add new state for fees
+	const [feesData, setFeesData] = useState(null);
 
 	return (
 		<div className="min-h-screen pb-14 select-none">
@@ -253,14 +257,7 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
 				/>
 				<Route
 					path="/fees"
-					element={
-						<Fees
-							w={w}
-							feesData={feesData}
-							setFeesData={setFeesData}
-							guest={false}
-						/>
-					}
+					element={<Fees w={w} feesData={feesData} setFeesData={setFeesData} />}
 				/>
 			</Routes>
 			<Navbar />
@@ -359,43 +356,6 @@ function App() {
 		setIsAuthenticated(true);
 		setIsDemoMode(true);
 	};
-
-	// After authentication (including auto-login), fetch and print fee summary and pending fines
-	useEffect(() => {
-		if (!isAuthenticated) return;
-
-		const portal = isDemoMode ? mockPortal : realPortal;
-
-		const fetchAndLogPayments = async () => {
-			try {
-				const feeSummary = await portal.get_fee_summary();
-				console.log("[Portal] Fee summary:", feeSummary);
-			} catch (err) {
-				console.error("[Portal] Failed to fetch fee summary:", err);
-			}
-
-			try {
-				const fines = await portal.get_fines_msc_charges();
-				console.log("[Portal] Pending miscellaneous charges / fines:", fines);
-			} catch (err) {
-				// The API may return Failure with message "NO APPROVED REQUEST FOUND" when there are no fines
-				if (
-					err &&
-					err.message &&
-					err.message.includes("NO APPROVED REQUEST FOUND")
-				) {
-					console.info(
-						"[Portal] No pending fines found (NO APPROVED REQUEST FOUND)."
-					);
-				} else {
-					console.error("[Portal] Failed to fetch pending fines:", err);
-				}
-			}
-		};
-
-		// Do not block UI - fire and forget
-		fetchAndLogPayments();
-	}, [isAuthenticated, isDemoMode]);
 
 	if (isLoading) {
 		return (
