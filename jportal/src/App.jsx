@@ -14,7 +14,6 @@ import Grades from "./components/Grades";
 import Exams from "./components/Exams";
 import Subjects from "./components/Subjects";
 import Profile from "./components/Profile";
-import Fees from "./components/Fees";
 import Cloudflare from "@/components/Cloudflare";
 import { ThemeProvider } from "./components/theme-provider";
 import { ThemeScript } from "./components/theme-script";
@@ -254,10 +253,6 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
 							setProfileData={setProfileData}
 						/>
 					}
-				/>
-				<Route
-					path="/fees"
-					element={<Fees w={w} feesData={feesData} setFeesData={setFeesData} />}
 				/>
 			</Routes>
 			<Navbar />
