@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
@@ -15,7 +21,10 @@ import { DynamicFontLoader } from "./components/DynamicFontLoader";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
-import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
+import {
+  WebPortal,
+  LoginError,
+} from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 
 import MockWebPortal from "./components/MockWebPortal";
 import { TriangleAlert } from "lucide-react";
@@ -30,6 +39,7 @@ const mockPortal = new MockWebPortal();
 
 // Create a wrapper component to use the useNavigate hook
 function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
+  const headerRef = useRef(null);
   const [activeAttendanceTab, setActiveAttendanceTab] = useState("overview");
   const [attendanceData, setAttendanceData] = useState({});
   const [attendanceSemestersData, setAttendanceSemestersData] = useState(null);
@@ -50,9 +60,11 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
   const [selectedSubjectsSem, setSelectedSubjectsSem] = useState(null);
 
   const [attendanceDailyDate, setAttendanceDailyDate] = useState(new Date());
-  const [isAttendanceCalendarOpen, setIsAttendanceCalendarOpen] = useState(false);
+  const [isAttendanceCalendarOpen, setIsAttendanceCalendarOpen] =
+    useState(false);
   const [isAttendanceTrackerOpen, setIsAttendanceTrackerOpen] = useState(false);
-  const [attendanceSubjectCacheStatus, setAttendanceSubjectCacheStatus] = useState({});
+  const [attendanceSubjectCacheStatus, setAttendanceSubjectCacheStatus] =
+    useState({});
 
   // Add attendance goal state
   const [attendanceGoal, setAttendanceGoal] = useState(() => {
@@ -104,29 +116,16 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
   const [isAttendanceMetaLoading, setIsAttendanceMetaLoading] = useState(true);
   const [isAttendanceDataLoading, setIsAttendanceDataLoading] = useState(true);
 
-  // Ref to measure header height
-  const headerRef = useRef(null);
-
-  // Measure header height and set CSS variable
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--header-height', `${height}px`);
-      }
-    };
-
-    // Update on mount and when window resizes
-    updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
-
-    return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, []);
+  // Add new state for fees
+  const [feesData, setFeesData] = useState(null);
 
   return (
     <div className="min-h-screen pb-14 select-none">
       <div ref={headerRef} className="sticky top-0 z-30 bg-background">
-        <Header setIsAuthenticated={setIsAuthenticated} setIsDemoMode={setIsDemoMode} />
+        <Header
+          setIsAuthenticated={setIsAuthenticated}
+          setIsDemoMode={setIsDemoMode}
+        />
       </div>
       <Routes>
         <Route path="/" element={<Navigate to="/attendance" />} />
@@ -245,7 +244,16 @@ function AuthenticatedApp({ w, setIsAuthenticated, setIsDemoMode }) {
             />
           }
         />
-        <Route path="/profile" element={<Profile w={w} profileData={profileData} setProfileData={setProfileData} />} />
+        <Route
+          path="/profile"
+          element={
+            <Profile
+              w={w}
+              profileData={profileData}
+              setProfileData={setProfileData}
+            />
+          }
+        />
       </Routes>
       <Navbar />
     </div>
@@ -271,7 +279,13 @@ function LoginWrapper({ onLoginSuccess, onDemoLogin, w }) {
     }, 100);
   };
 
-  return <Login onLoginSuccess={handleLoginSuccess} onDemoLogin={handleDemoLogin} w={w} />;
+  return (
+    <Login
+      onLoginSuccess={handleLoginSuccess}
+      onDemoLogin={handleDemoLogin}
+      w={w}
+    />
+  );
 }
 
 function App() {
@@ -299,10 +313,17 @@ function App() {
       } catch (error) {
         if (
           error instanceof LoginError &&
-          error.message.includes("JIIT Web Portal server is temporarily unavailable")
+          error.message.includes(
+            "JIIT Web Portal server is temporarily unavailable"
+          )
         ) {
-          setError("JIIT Web Portal server is temporarily unavailable. Please try again later.");
-        } else if (error instanceof LoginError && error.message.includes("Failed to fetch")) {
+          setError(
+            "JIIT Web Portal server is temporarily unavailable. Please try again later."
+          );
+        } else if (
+          error instanceof LoginError &&
+          error.message.includes("Failed to fetch")
+        ) {
           setError(
             "Please check your internet connection. If connected, JIIT Web Portal server is temporarily unavailable."
           );
@@ -377,7 +398,11 @@ function App() {
                     path="*"
                     element={
                       <>
-                        {error && <div className="text-destructive text-center pt-4">{error}</div>}
+                        {error && (
+                          <div className="text-destructive text-center pt-4">
+                            {error}
+                          </div>
+                        )}
                         <LoginWrapper
                           onLoginSuccess={handleRealLogin}
                           onDemoLogin={handleDemoLogin}
