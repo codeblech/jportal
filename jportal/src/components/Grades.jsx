@@ -121,6 +121,13 @@ export default function Grades({
         speculativeSemesters.sort((a, b) => a.stynumber - b.stynumber);
         let mergedSemesters = [...actualSemesters, ...speculativeSemesters];
 
+        mergedSemesters = mergedSemesters.map((s) => ({
+          ...s,
+          sgpa: Number(s.sgpa),
+          cgpa: Number(s.cgpa),
+          earnedgradepoints: Number(s.earnedgradepoints),
+          totalcoursecredit: Number(s.totalcoursecredit),
+        }));
         // Recalculate CGPA for speculative semesters based on cumulative grade points
         if (speculativeSemesters.length > 0) {
           let totalGradePoints = actualSemesters.reduce((sum, sem) => sum + sem.earnedgradepoints, 0);
@@ -184,26 +191,38 @@ export default function Grades({
     const [isInteractiveMode, setIsInteractiveMode] = useState(false);
     const [modifiedSemesterData, setModifiedSemesterData] = useState(null);
 
+    const fmt1 = (v) => {
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) ? n.toFixed(1) : "—";
+    };
+
     // Custom tooltip component
     const CustomTooltip = ({ active, payload }) => {
-      if (active && payload && payload.length) {
-        return (
-          <div
-            className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "4px",
-              padding: "4px 8px",
-              color: "var(--card-foreground)",
-            }}
-          >
-            <p style={{ margin: 0, color: "var(--chart-1)" }}>SGPA: {payload[0]?.value?.toFixed(1)}</p>
-            <p style={{ margin: 0, color: "var(--chart-2)" }}>CGPA: {payload[1]?.value?.toFixed(1)}</p>
-          </div>
-        );
-      }
-      return null;
+      if (!active || !payload?.length) return null;
+
+      // payload entries are in the same order as <Line/> components
+      const cgpaEntry = payload.find((p) => p.dataKey === "cgpa");
+      const sgpaEntry = payload.find((p) => p.dataKey === "sgpa");
+
+      return (
+        <div
+          className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
+          style={{
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "4px",
+            padding: "4px 8px",
+            color: "var(--card-foreground)",
+          }}
+        >
+          <p style={{ margin: 0, color: "var(--chart-1)" }}>
+            SGPA: {fmt1(sgpaEntry?.value)}
+          </p>
+          <p style={{ margin: 0, color: "var(--chart-2)" }}>
+            CGPA: {fmt1(cgpaEntry?.value)}
+          </p>
+        </div>
+      );
     };
 
     const nextSortState = (current) => (current === "default" ? "asc" : current === "asc" ? "desc" : "default");
@@ -532,10 +551,12 @@ export default function Grades({
                           <YAxis
                             stroke="var(--muted-foreground)"
                             domain={["dataMin", "dataMax"]}
-                            ticks={undefined}
                             tickCount={5}
                             padding={{ top: 20, bottom: 20 }}
-                            tickFormatter={(value) => value.toFixed(1)}
+                            tickFormatter={(v) => {
+                              const n = typeof v === "number" ? v : Number(v);
+                              return Number.isFinite(n) ? n.toFixed(1) : "";
+                            }}
                           />
                           <Tooltip content={<CustomTooltip />} />
                           <Legend verticalAlign="top" height={36} />
