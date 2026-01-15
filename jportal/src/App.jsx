@@ -15,7 +15,7 @@ import { DynamicFontLoader } from "./components/DynamicFontLoader";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
-import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
+import { WebPortal, LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.24/dist/jsjiit.esm.js";
 
 import MockWebPortal from "./components/MockWebPortal";
 import { TriangleAlert } from "lucide-react";
@@ -25,7 +25,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 // Create both portal instances at the top level
-const realPortal = new WebPortal();
+const realPortal = new WebPortal({
+  useProxy: true,
+  proxyUrl: "https://jportal-cors-proxy.onrender.com",
+});
 const mockPortal = new MockWebPortal();
 
 // Create a wrapper component to use the useNavigate hook
