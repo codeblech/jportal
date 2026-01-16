@@ -232,7 +232,7 @@ const Header = ({ setIsAuthenticated, setIsDemoMode }) => {
     <header className="bg-background mx-auto pr-3 pt-4 pb-2">
       <div className="container-fluid flex justify-between items-center">
         <div className="relative inline-block pl-3">
-          <FairyLights />
+          {/* <FairyLights /> */}
           <h1 className="text-foreground text-2xl font-bold lg:text-3xl font-sans relative z-10">JPortal</h1>
         </div>
         <div className="flex items-center gap-1">
