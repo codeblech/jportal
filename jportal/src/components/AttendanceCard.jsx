@@ -15,7 +15,7 @@ const AttendanceCard = ({
 }) => {
   const { name, attendance, combined, lecture, tutorial, practical, classesNeeded, classesCanMiss } = subject;
   console.log(name, attendance, combined, lecture, tutorial, practical);
-  const attendancePercentage = attendance.total > 0 ? combined.toFixed(0) : "100";
+  const attendancePercentage = combined.toFixed(0) ?? "100";
   const displayName = name.replace(/\s*\([^)]*\)\s*$/, "");
   const hasDailyData = attendance.attended !== null && attendance.total !== null;
 
