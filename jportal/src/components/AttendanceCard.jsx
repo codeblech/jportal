@@ -114,34 +114,43 @@ const AttendanceCard = ({
             {tutorial !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
             {practical !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
           </div>
-          {attendance.attended !== null && attendance.total !== null ? (
-            <div className="flex items-center gap-2">
-              <div className="text-center">
-                <div className="text-sm">{attendance.attended}</div>
-                <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
-                <div className="text-sm">{attendance.total}</div>
+          <div className="min-h-[100px]">
+            {attendance.attended !== null && attendance.total !== null ? (
+              <div className="flex items-center gap-2">
+                <div className="text-center">
+                  <div className="text-sm">{attendance.attended}</div>
+                  <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
+                  <div className="text-sm">{attendance.total}</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="min-w-[80px] min-h-[80px] flex items-center justify-center">
+                    <CircleProgress percentage={attendancePercentage} />
+                  </div>
+                  {classesNeeded > 0 ? (
+                    <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
+                  ) : (
+                    classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col items-center">
-                <CircleProgress key={Date.now()} percentage={attendancePercentage} />
-                {classesNeeded > 0 ? (
-                  <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
-                ) : (
-                  classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
-                )}
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="text-center">
+                  <div className="h-5 w-8 bg-muted animate-pulse rounded"></div>
+                  <div className="h-px w-full bg-muted my-1"></div>
+                  <div className="h-5 w-8 bg-muted animate-pulse rounded"></div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="min-w-[80px] min-h-[80px] flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-muted animate-pulse"></div>
+                  </div>
+                  <div className="h-4 w-16 bg-muted animate-pulse rounded mt-1"></div>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <div className="flex flex-col items-center gap-1">
-                <Skeleton className="h-4 w-8" />
-                <Skeleton className="h-px w-8" />
-                <Skeleton className="h-4 w-8" />
-              </div>
-              <Skeleton className="h-12 w-12 rounded-full" />
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </Card>
+      </Card >
 
       <Sheet
         open={selectedSubject?.name === subject.name}

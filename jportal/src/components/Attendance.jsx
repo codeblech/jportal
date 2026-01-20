@@ -376,7 +376,7 @@ const Attendance = ({
     const attended = subject.attendance?.attended ?? 0;
     const total = subject.attendance?.total ?? 0;
     // treat 0/0 as very high so they appear on top (matches original behavior)
-    if (total === 0 && attended === 0) return 1000;
+    //if (total === 0 && attended === 0) return 1000;
     // prefer provided combined percentage, fallback to computed percentage
     if (typeof subject.combined === "number") return subject.combined;
     return total === 0 ? 0 : (attended / total) * 100;
