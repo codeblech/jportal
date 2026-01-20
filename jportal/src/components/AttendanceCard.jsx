@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AttendanceCard = ({
   subject,
@@ -113,21 +114,32 @@ const AttendanceCard = ({
             {tutorial !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
             {practical !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="text-center">
-              <div className="text-sm">{attendance.attended}</div>
-              <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
-              <div className="text-sm">{attendance.total}</div>
+          {attendance.attended !== null && attendance.total !== null ? (
+            <div className="flex items-center gap-2">
+              <div className="text-center">
+                <div className="text-sm">{attendance.attended}</div>
+                <div className="group-hover:bg-accent-foreground h-px w-full bg-foreground"></div>
+                <div className="text-sm">{attendance.total}</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <CircleProgress key={Date.now()} percentage={attendancePercentage} />
+                {classesNeeded > 0 ? (
+                  <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
+                ) : (
+                  classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
+                )}
+              </div>
             </div>
-            <div className="flex flex-col items-center">
-              <CircleProgress key={Date.now()} percentage={attendancePercentage} />
-              {classesNeeded > 0 ? (
-                <div className="text-xs mt-1 text-muted-foreground">Attend {classesNeeded}</div>
-              ) : (
-                classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
-              )}
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center gap-1">
+                <Skeleton className="h-4 w-8" />
+                <Skeleton className="h-px w-8" />
+                <Skeleton className="h-4 w-8" />
+              </div>
+              <Skeleton className="h-12 w-12 rounded-full" />
             </div>
-          </div>
+          )}
         </div>
       </Card>
 

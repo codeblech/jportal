@@ -151,7 +151,7 @@ const Attendance = ({
     !attendanceData[semId]?.error &&
     perSubReadyBySem[semId] !== true;
 
-  const pageLoading = isAttendanceMetaLoading || isAttendanceDataLoading || perSubLoading;
+  const pageLoading = isAttendanceMetaLoading || isAttendanceDataLoading;
 
   useEffect(() => {
     if (!selectedSem) return;
