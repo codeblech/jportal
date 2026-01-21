@@ -139,6 +139,110 @@ const Attendance = ({
     }
   };
 
+  const [perSubReadyBySem, setPerSubReadyBySem] = useState({});
+  const semId = selectedSem?.registration_id;
+  const semAttendance = attendanceData?.[semId];
+  const list = semAttendance?.studentattendancelist;
+
+  const perSubLoading =
+    !!semId &&
+    Array.isArray(attendanceData[semId]?.studentattendancelist) &&
+    attendanceData[semId]?.studentattendancelist.length > 0 &&
+    !attendanceData[semId]?.error &&
+    perSubReadyBySem[semId] !== true;
+
+  const pageLoading = isAttendanceMetaLoading || isAttendanceDataLoading;
+
+  useEffect(() => {
+    if (!selectedSem) return;
+    if (!Array.isArray(list) || list.length === 0) return;
+    if (semAttendance?.error) return;
+
+    // Since this effect will do multiple network calls, it is very costly, to prevent unnecessary costs:
+    // do nothing if sem data is present
+    if (perSubReadyBySem?.[semId] === true) return;
+    // flag for async ops of each subject, state refers e.g. changing sem mid loading for all subjs etc.
+    let stateChanged = false;
+
+    (async () => {
+      setPerSubReadyBySem((p) => ({ ...(p || {}), [semId]: false }));
+      await Promise.all(
+        list.map(async (item) => {
+          const name = item.subjectcode;
+
+          if (subjectAttendanceData?.[name]) {
+            if (!stateChanged) setSubjectCacheStatus((p) => ({ ...(p || {}), [name]: "cached" }));
+            return;
+          }
+          if (!stateChanged) setSubjectCacheStatus((p) => ({ ...(p || {}), [name]: "fetching" }));
+
+          try {
+            const subjectData = semAttendance.studentattendancelist.find((s) => s.subjectcode === name);
+            if (!subjectData) {
+              if (!stateChanged) {
+                setSubjectAttendanceData((p) => ({ ...(p || {}), [name]: [] }));
+                setSubjectCacheStatus((p) => ({ ...(p || {}), [name]: "cached" }));
+              }
+              return;
+            }
+
+            const subjectcomponentids = ["Lsubjectcomponentid", "Psubjectcomponentid", "Tsubjectcomponentid"]
+              .filter((id) => subjectData[id])
+              .map((id) => subjectData[id]);
+
+            const data = await w.get_subject_daily_attendance(
+              selectedSem,
+              subjectData.subjectid,
+              subjectData.individualsubjectcode,
+              subjectcomponentids
+            );
+
+            if (!stateChanged) {
+              setSubjectAttendanceData((p) => ({
+                ...(p || {}),
+                [name]: data?.studentAttdsummarylist ?? [],
+              }));
+              setSubjectCacheStatus((p) => ({ ...(p || {}), [name]: "cached" }));
+            }
+          } catch (e) {
+            if (!stateChanged) {
+              setSubjectAttendanceData((p) => ({ ...(p || {}), [name]: [] }));
+              setSubjectCacheStatus((p) => ({ ...(p || {}), [name]: "cached" }));
+            }
+          }
+        })
+      );
+
+      if (!stateChanged) setPerSubReadyBySem((p) => ({ ...(p || {}), [semId]: true }));
+    })();
+
+    return () => {
+      stateChanged = true;
+    };
+  }, [
+    w,
+    selectedSem?.registration_id,
+    attendanceData?.[semId]?.studentattendancelist?.length,
+    attendanceData?.[semId]?.error,
+    perSubReadyBySem?.[semId],
+  ]);
+
+  // this function calculates the attended and total class from the daily subject wise attendance (as used in AttendanceCard for graph)
+  function getAttendanceFromDaily(attendances) {
+    let attended, total;
+    if (attendances === undefined) {
+      return { attended: null, total: null };
+    }
+    total = attendances.length;
+    attended = 0;
+    for (const attendance of attendances) {
+      if (attendance.present === "Present") {
+        attended++;
+      }
+    }
+    return { attended, total };
+  }
+
   const subjects =
     (selectedSem &&
       attendanceData[selectedSem.registration_id]?.studentattendancelist?.map((item) => {
@@ -156,11 +260,7 @@ const Attendance = ({
           LTpercantage,
         } = item;
 
-        const { attended, total } = {
-          attended: (Ltotalpres || 0) + (Ttotalpres || 0) + (Ptotalpres || 0),
-          total: (Ltotalclass || 0) + (Ttotalclass || 0) + (Ptotalclass || 0),
-        };
-
+        const { attended, total } = getAttendanceFromDaily(subjectAttendanceData[subjectcode]);
         const currentPercentage = (attended / total) * 100;
         const classesNeeded = attendanceGoal
           ? Math.ceil((attendanceGoal * total - 100 * attended) / (100 - attendanceGoal))
@@ -238,24 +338,26 @@ const Attendance = ({
     }
   }, [attendanceSortOrder]);
 
-  useEffect(() => {
-    if (activeTab !== "daily") return;
+  // Can be removed since now attended/total is calcuated after fetching attendance for each subject 
 
-    const loadAllSubjects = async () => {
-      await Promise.all(
-        subjects.map(async (subj) => {
-          if (subjectAttendanceData[subj.name]) {
-            setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "cached" }));
-            return;
-          }
-          setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "fetching" }));
-          await fetchSubjectAttendance(subj); // server round‑trip
-          setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "cached" }));
-        })
-      );
-    };
-    loadAllSubjects();
-  }, [activeTab]);
+  //   useEffect(() => {
+  //     if (activeTab !== "daily") return;
+  // 
+  //     const loadAllSubjects = async () => {
+  //       await Promise.all(
+  //         subjects.map(async (subj) => {
+  //           if (subjectAttendanceData[subj.name]) {
+  //             setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "cached" }));
+  //             return;
+  //           }
+  //           setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "fetching" }));
+  //           await fetchSubjectAttendance(subj); // server round‑trip
+  //           setSubjectCacheStatus((p) => ({ ...p, [subj.name]: "cached" }));
+  //         })
+  //       );
+  //     };
+  //     loadAllSubjects();
+  //   }, [activeTab]);
 
   const getClassesFor = (subjectName, date) => {
     const all = subjectAttendanceData[subjectName];
@@ -274,7 +376,7 @@ const Attendance = ({
     const attended = subject.attendance?.attended ?? 0;
     const total = subject.attendance?.total ?? 0;
     // treat 0/0 as very high so they appear on top (matches original behavior)
-    if (total === 0 && attended === 0) return 1000;
+    //if (total === 0 && attended === 0) return 1000;
     // prefer provided combined percentage, fallback to computed percentage
     if (typeof subject.combined === "number") return subject.combined;
     return total === 0 ? 0 : (attended / total) * 100;
@@ -325,7 +427,7 @@ const Attendance = ({
         </div>
       </div>
 
-      {isAttendanceMetaLoading || isAttendanceDataLoading ? (
+      {pageLoading ? (
         <div className="flex items-center justify-center py-4 h-[calc(100vh_-_<header_height>-<navbar_height>)]">
           Loading attendance...
         </div>
@@ -436,9 +538,8 @@ const Attendance = ({
                       {lectures.map((cls, i) => (
                         <div
                           key={i}
-                          className={`flex justify-between text-sm ${
-                            cls.present === "Present" ? "text-chart-1" : "text-chart-2"
-                          }`}
+                          className={`flex justify-between text-sm ${cls.present === "Present" ? "text-chart-1" : "text-chart-2"
+                            }`}
                         >
                           <span>
                             {cls.classtype} • {cls.present}
@@ -474,9 +575,8 @@ const Attendance = ({
                       percentage={
                         (100 * subjects.filter((s) => subjectCacheStatus[s.name] === "cached").length) / subjects.length
                       }
-                      label={`${subjects.filter((s) => subjectCacheStatus[s.name] === "cached").length}/${
-                        subjects.length
-                      }`}
+                      label={`${subjects.filter((s) => subjectCacheStatus[s.name] === "cached").length}/${subjects.length
+                        }`}
                     />
                   </button>
                 </SheetTrigger>
