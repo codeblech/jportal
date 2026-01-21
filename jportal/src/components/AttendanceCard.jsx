@@ -111,9 +111,9 @@ const AttendanceCard = ({
         <div className="group flex justify-between items-center px-3 py-1">
           <div className="flex-1 mr-4">
             <h2 className="text-sm font-semibold max-[390px]:text-xs ">{displayName}</h2>
-            {lecture !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Lecture: {lecture}%</p>}
-            {tutorial !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
-            {practical !== "" && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
+            {lecture !== undefined && <p className="text-sm lg:text-base max-[390px]:text-xs">Lecture: {lecture}%</p>}
+            {tutorial !== undefined && <p className="text-sm lg:text-base max-[390px]:text-xs">Tutorial: {tutorial}%</p>}
+            {practical !== undefined && <p className="text-sm lg:text-base max-[390px]:text-xs">Practical: {practical}%</p>}
           </div>
           <div className="min-h-[100px]">
             <div className="flex items-center gap-2">
