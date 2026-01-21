@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const AttendanceCard = ({
   subject,
@@ -126,9 +125,9 @@ const AttendanceCard = ({
                   </>
                 ) : (
                   <>
-                    <div className="h-5 w-3 bg-muted animate-pulse rounded"></div>
-                    <div className="h-px w-full bg-muted my-1"></div>
-                    <div className="h-5 w-3 bg-muted animate-pulse rounded"></div>
+                    <div className="h-4 w-3 rounded animate-pulse bg-foreground/10 ring-1 ring-border/50"></div>
+                    <div className="h-px w-full my-1 bg-border/60"></div>
+                    <div className="h-4 w-3 mt-1 rounded animate-pulse bg-foreground/10 ring-1 ring-border/50"></div>
                   </>
                 )}
               </div>
@@ -143,7 +142,7 @@ const AttendanceCard = ({
                     classesCanMiss > 0 && <div className="text-xs mt-1 text-muted-foreground">Can miss {classesCanMiss}</div>
                   )
                 ) : (
-                  <div className="h-4 w-16 bg-muted animate-pulse rounded mt-1"></div>
+                  <div className="h-4 w-16  rounded animate-pulse bg-foreground/10 ring-1 ring-border/50"></div>
                 )}
               </div>
             </div>
