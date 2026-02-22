@@ -3298,43 +3298,43 @@
 			"semesterList": [
 				{
 					"stynumber": 1,
-					"sgpa": 8.5,
-					"cgpa": 8.5,
+					"sgpa": 8.52,
+					"cgpa": 8.52,
 					"earnedgradepoints": 170,
 					"totalcoursecredit": 20
 				},
 				{
 					"stynumber": 2,
-					"sgpa": 9.1,
-					"cgpa": 8.7,
+					"sgpa": 9.14,
+					"cgpa": 8.73,
 					"earnedgradepoints": 180,
 					"totalcoursecredit": 20
 				},
 				{
 					"stynumber": 3,
-					"sgpa": 6.9,
-					"cgpa": 8.5,
+					"sgpa": 6.94,
+					"cgpa": 8.58,
 					"earnedgradepoints": 170,
 					"totalcoursecredit": 20
 				},
 				{
 					"stynumber": 4,
-					"sgpa": 7.3,
-					"cgpa": 8.7,
+					"sgpa": 7.31,
+					"cgpa": 8.71,
 					"earnedgradepoints": 180,
 					"totalcoursecredit": 20
 				},
 				{
 					"stynumber": 5,
-					"sgpa": 8.5,
-					"cgpa": 8.5,
+					"sgpa": 8.57,
+					"cgpa": 8.56,
 					"earnedgradepoints": 170,
 					"totalcoursecredit": 20
 				},
 				{
 					"stynumber": 6,
-					"sgpa": 6.9,
-					"cgpa": 8.7,
+					"sgpa": 6.97,
+					"cgpa": 8.74,
 					"earnedgradepoints": 180,
 					"totalcoursecredit": 20
 				}

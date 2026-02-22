@@ -595,12 +595,12 @@ export default function Grades({
                               GP: {sem.earnedgradepoints.toFixed(1)}/{sem.totalcoursecredit * 10}
                             </p>
                           </div>
-                          <div className="flex items-center gap-6">
-                            <div className="text-center">
+                          <div className="grid min-w-[11rem] grid-cols-2 gap-6 tabular-nums">
+                            <div className="w-20 text-right">
                               <div className="text-xl font-bold text-chart-1">{sem.sgpa}</div>
                               <div className="text-xs text-muted-foreground">SGPA</div>
                             </div>
-                            <div className="text-center">
+                            <div className="w-20 text-right">
                               <div className="text-xl font-bold text-chart-2">{sem.cgpa}</div>
                               <div className="text-xs text-muted-foreground">CGPA</div>
                             </div>
