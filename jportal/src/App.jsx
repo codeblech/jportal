@@ -27,7 +27,8 @@ const queryClient = new QueryClient();
 // Create both portal instances at the top level
 const realPortal = new WebPortal({
   useProxy: true,
-  proxyUrl: "https://jportal-cors-proxy.my-malikyash.workers.dev",
+  // proxyUrl: "https://jportal-cors-proxy.my-malikyash.workers.dev",
+  proxyUrl: "https://jportal-cors-proxy.onrender.com"
 });
 const mockPortal = new MockWebPortal();
 
