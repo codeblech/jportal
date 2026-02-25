@@ -183,91 +183,91 @@ export default function Grades({
     fetchGradeCardSemesters();
   }, [w, gradeCardSemesters.length, setGradeCardSemesters, selectedGradeCardSem]);
 
-    // sorting state for grade card list
-    const [creditSort, setCreditSort] = useState("default"); // default, asc, desc
-    const [gradeSort, setGradeSort] = useState("default"); // default, asc, desc
+  // sorting state for grade card list
+  const [creditSort, setCreditSort] = useState("default"); // default, asc, desc
+  const [gradeSort, setGradeSort] = useState("default"); // default, asc, desc
 
-    // interactive chart state
-    const [isInteractiveMode, setIsInteractiveMode] = useState(false);
-    const [modifiedSemesterData, setModifiedSemesterData] = useState(null);
+  // interactive chart state
+  const [isInteractiveMode, setIsInteractiveMode] = useState(false);
+  const [modifiedSemesterData, setModifiedSemesterData] = useState(null);
 
-    const fmt1 = (v) => {
-      const n = typeof v === "number" ? v : Number(v);
-      return Number.isFinite(n) ? n.toFixed(1) : "—";
-    };
+  const fmt1 = (v) => {
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) ? n.toFixed(1) : "—";
+  };
 
-    // Custom tooltip component
-    const CustomTooltip = ({ active, payload }) => {
-      if (!active || !payload?.length) return null;
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload }) => {
+    if (!active || !payload?.length) return null;
 
-      // payload entries are in the same order as <Line/> components
-      const cgpaEntry = payload.find((p) => p.dataKey === "cgpa");
-      const sgpaEntry = payload.find((p) => p.dataKey === "sgpa");
+    // payload entries are in the same order as <Line/> components
+    const cgpaEntry = payload.find((p) => p.dataKey === "cgpa");
+    const sgpaEntry = payload.find((p) => p.dataKey === "sgpa");
 
-      return (
-        <div
-          className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "4px",
-            padding: "4px 8px",
-            color: "var(--card-foreground)",
-          }}
-        >
-          <p style={{ margin: 0, color: "var(--chart-1)" }}>
-            SGPA: {fmt1(sgpaEntry?.value)}
-          </p>
-          <p style={{ margin: 0, color: "var(--chart-2)" }}>
-            CGPA: {fmt1(cgpaEntry?.value)}
-          </p>
-        </div>
-      );
-    };
+    return (
+      <div
+        className="max-[400px]:text-[0.65rem] max-[540px]:text-xs text-sm"
+        style={{
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
+          borderRadius: "4px",
+          padding: "4px 8px",
+          color: "var(--card-foreground)",
+        }}
+      >
+        <p style={{ margin: 0, color: "var(--chart-1)" }}>
+          SGPA: {fmt1(sgpaEntry?.value)}
+        </p>
+        <p style={{ margin: 0, color: "var(--chart-2)" }}>
+          CGPA: {fmt1(cgpaEntry?.value)}
+        </p>
+      </div>
+    );
+  };
 
-    const nextSortState = (current) => (current === "default" ? "asc" : current === "asc" ? "desc" : "default");
+  const nextSortState = (current) => (current === "default" ? "asc" : current === "asc" ? "desc" : "default");
 
-    const toggleCreditSort = () => {
-      const nextState = nextSortState(creditSort);
-      setCreditSort(nextState);
-      // Reset grade sort when switching to credit sort
-      if (nextState !== "default") {
-        setGradeSort("default");
-      }
-    };
+  const toggleCreditSort = () => {
+    const nextState = nextSortState(creditSort);
+    setCreditSort(nextState);
+    // Reset grade sort when switching to credit sort
+    if (nextState !== "default") {
+      setGradeSort("default");
+    }
+  };
 
-    const toggleGradeSort = () => {
-      const nextState = nextSortState(gradeSort);
-      setGradeSort(nextState);
-      // Reset credit sort when switching to grade sort
-      if (nextState !== "default") {
-        setCreditSort("default");
-      }
-    };
+  const toggleGradeSort = () => {
+    const nextState = nextSortState(gradeSort);
+    setGradeSort(nextState);
+    // Reset credit sort when switching to grade sort
+    if (nextState !== "default") {
+      setCreditSort("default");
+    }
+  };
 
-    // persist sort preferences
-    useEffect(() => {
-      try {
-        const saved = localStorage.getItem("grades_credit_sort");
-        if (saved === "asc" || saved === "desc" || saved === "default") setCreditSort(saved);
-      } catch (e) {}
-    }, []);
-    useEffect(() => {
-      try {
-        const saved = localStorage.getItem("grades_grade_sort");
-        if (saved === "asc" || saved === "desc" || saved === "default") setGradeSort(saved);
-      } catch (e) {}
-    }, []);
-    useEffect(() => {
-      try {
-        localStorage.setItem("grades_credit_sort", creditSort);
-      } catch (e) {}
-    }, [creditSort]);
-    useEffect(() => {
-      try {
-        localStorage.setItem("grades_grade_sort", gradeSort);
-      } catch (e) {}
-    }, [gradeSort]);
+  // persist sort preferences
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("grades_credit_sort");
+      if (saved === "asc" || saved === "desc" || saved === "default") setCreditSort(saved);
+    } catch (e) { }
+  }, []);
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("grades_grade_sort");
+      if (saved === "asc" || saved === "desc" || saved === "default") setGradeSort(saved);
+    } catch (e) { }
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("grades_credit_sort", creditSort);
+    } catch (e) { }
+  }, [creditSort]);
+  useEffect(() => {
+    try {
+      localStorage.setItem("grades_grade_sort", gradeSort);
+    } catch (e) { }
+  }, [gradeSort]);
 
   useEffect(() => {
     const fetchMarksSemesters = async () => {
@@ -315,7 +315,7 @@ export default function Grades({
 
           pyodide.globals.set("ENDPOINT", ENDPOINT);
           pyodide.globals.set("fetchOptions", { method: "GET", headers });
-          pyodide.globals.set("API", API);
+          pyodide.globals.set("API", w.proxyUrl);
 
           const res = await pyodide.runPythonAsync(`
             import pyodide_js
@@ -332,7 +332,7 @@ export default function Grades({
                 import pymupdf
                 from jiit_marks import parse_report
 
-                r = await pyodide.http.pyfetch(API+ENDPOINT, **(fetchOptions.to_py()))
+                r = await pyodide.http.pyfetch(API+"/proxy"+ENDPOINT, **(fetchOptions.to_py()))
                 data = await r.bytes()
 
                 doc = pymupdf.Document(stream=data)
@@ -486,7 +486,7 @@ export default function Grades({
                   >
                     <div className="w-full flex justify-between items-center gap-2 mb-2 max-w-4xl">
                       <div className="flex flex-row gap-2 max-[400px]:text-[0.55rem] max-[460px]:text-[0.65rem] max-[540px]:text-[0.7rem] text-xs text-muted-foreground">
-                        <Info className="w-4 h-4"/>
+                        <Info className="w-4 h-4" />
                         Drag the SGPA dots vertically to see how CGPA changes
                       </div>
                       <Button
