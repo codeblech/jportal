@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginError } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.23/dist/jsjiit.esm.js";
 import PublicHeader from "./PublicHeader";
+import { useHaptics } from "@/hooks/useHaptics";
 
 // Define the form schema
 const formSchema = z.object({
@@ -27,6 +28,7 @@ export default function Login({ onLoginSuccess, onDemoLogin, w }) {
     isLoading: false,
     credentials: null,
   });
+  const haptics = useHaptics();
 
   // Initialize form
   const form = useForm({
@@ -39,6 +41,7 @@ export default function Login({ onLoginSuccess, onDemoLogin, w }) {
 
   // Handle demo login
   const handleDemoLogin = () => {
+    haptics.success();
     onDemoLogin();
   };
 
@@ -55,6 +58,7 @@ export default function Login({ onLoginSuccess, onDemoLogin, w }) {
         localStorage.setItem("password", loginStatus.credentials.password);
 
         console.log("Login successful");
+        haptics.success();
         setLoginStatus((prev) => ({
           ...prev,
           isLoading: false,
@@ -67,11 +71,14 @@ export default function Login({ onLoginSuccess, onDemoLogin, w }) {
           error.message.includes("JIIT Web Portal server is temporarily unavailable")
         ) {
           console.error("JIIT Web Portal server is temporarily unavailable");
+          haptics.error();
           toast.error("JIIT Web Portal server is temporarily unavailable. Please try again later.");
         } else if (error instanceof LoginError && error.message.includes("Failed to fetch")) {
+          haptics.error();
           toast.error("Please check your internet connection. If connected, JIIT Web Portal server is unavailable.");
         } else {
           console.error("Login failed:", error);
+          haptics.error();
           toast.error("Login failed. Please check your credentials.");
         }
         setLoginStatus((prev) => ({
