@@ -5,6 +5,7 @@ import LogoutIcon from "@/../public/icons/logout.svg?react";
 import { Link } from "react-router-dom";
 import { ChartNoAxesCombined } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useHaptics } from "@/hooks/useHaptics";
 
 const FairyLights = () => {
   const [textMetrics, setTextMetrics] = useState(null);
@@ -216,8 +217,10 @@ const FairyLights = () => {
 
 const Header = ({ setIsAuthenticated, setIsDemoMode }) => {
   const navigate = useNavigate();
+  const haptics = useHaptics();
 
   const handleLogout = () => {
+    haptics.tap();
     localStorage.removeItem("username");
     localStorage.removeItem("password");
     localStorage.removeItem("attendanceData");

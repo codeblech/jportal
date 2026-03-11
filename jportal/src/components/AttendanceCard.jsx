@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useHaptics } from "@/hooks/useHaptics";
 
 const AttendanceCard = ({
   subject,
@@ -21,7 +22,9 @@ const AttendanceCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
+  const haptics = useHaptics();
   const handleClick = async () => {
+    haptics.tap();
     setSelectedSubject(subject);
     if (!subjectAttendanceData[subject.name]) {
       setIsLoading(true);
@@ -152,9 +155,12 @@ const AttendanceCard = ({
 
       <Sheet
         open={selectedSubject?.name === subject.name}
-        onOpenChange={() => {
-          setSelectedSubject(null);
-          setSelectedDate(null);
+        onOpenChange={(open) => {
+          if (!open) {
+            haptics.tap();
+            setSelectedSubject(null);
+            setSelectedDate(null);
+          }
         }}
       >
         <SheetContent side="bottom" className="h-[70vh] bg-background text-foreground border-0 overflow-hidden">
@@ -268,7 +274,11 @@ const AttendanceCard = ({
                     },
                   }}
                   selected={selectedDate}
-                  onSelect={(date) => setSelectedDate(date)}
+                  onSelect={(date) => {
+                    if (date) haptics.selection();
+                    setSelectedDate(date);
+                  }}
+                  onMonthChange={() => haptics.selection()}
                   className={`pb-2 text-foreground ${isLoading ? "animate-pulse" : ""} w-full shrink-0 max-w-full`}
                   classNames={{
                     months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

@@ -6,8 +6,10 @@ import { CHART_CONFIG, DRAG_CONFIG } from "@/utils/chartConstants";
 import DraggableDot from "./DraggableDot";
 import GPAChartTooltip from "./GPAChartTooltip";
 import { Card } from "@/components/ui/card";
+import { useHaptics } from "@/hooks/useHaptics";
 
 export default function InteractiveGPAChart({ semesterData, onDataChange }) {
+  const haptics = useHaptics();
   const [chartData, setChartData] = useState(semesterData);
   const [dragState, setDragState] = useState({
     isDragging: false,
@@ -29,6 +31,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     // Don't allow dragging during intro animation
     if (isAnimating) return;
 
+    haptics.tap();
     const semesterValue = chartData[index].sgpa;
     setDragState({
       isDragging: true,
@@ -61,6 +64,10 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     // Round to specified precision
     newValue = Math.round(newValue / DRAG_CONFIG.precision) * DRAG_CONFIG.precision;
 
+    if (newValue !== chartData[dragState.draggedIndex].sgpa) {
+      haptics.selection();
+    }
+
     // Recalculate CGPA based on new SGPA
     const updatedData = recalculateCGPA(chartData, dragState.draggedIndex, newValue);
     setChartData(updatedData);
@@ -72,6 +79,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   };
 
   const handleDragEnd = () => {
+    haptics.tap();
     setDragState({
       isDragging: false,
       draggedIndex: null,
@@ -85,6 +93,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     // Don't allow dragging during intro animation
     if (isAnimating) return;
 
+    haptics.tap();
     setCardDragState({
       isDragging: true,
       draggedIndex: index,
@@ -106,6 +115,10 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
     // Round to specified precision
     newValue = Math.round(newValue / DRAG_CONFIG.precision) * DRAG_CONFIG.precision;
 
+    if (newValue !== chartData[index].sgpa) {
+      haptics.selection();
+    }
+
     // Recalculate CGPA based on new SGPA
     const updatedData = recalculateCGPA(chartData, index, newValue);
     setChartData(updatedData);
@@ -123,6 +136,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
   };
 
   const handleCardDragEnd = () => {
+    haptics.tap();
     setCardDragState({
       isDragging: false,
       draggedIndex: null,
@@ -176,6 +190,7 @@ export default function InteractiveGPAChart({ semesterData, onDataChange }) {
           // Animation complete - reset to original values
           setChartData(originalDataRef.current);
           setIsAnimating(false);
+          haptics.success();
           if (onDataChange) {
             onDataChange(originalDataRef.current);
           }
