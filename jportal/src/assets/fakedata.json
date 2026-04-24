@@ -3710,8 +3710,7 @@
 								"FM": 20
 							},
 							"T2": {
-								"OM": 6,
-								"FM": 20
+								"remarks": "absent"
 							},
 							"ENDTERM": {
 								"OM": 23,
