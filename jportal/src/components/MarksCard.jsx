@@ -1,4 +1,3 @@
-import React from "react";
 import { Progress } from "@/components/ui/progress";
 
 export default function MarksCard({ course }) {
@@ -9,11 +8,17 @@ export default function MarksCard({ course }) {
     return "bg-marks-poor";
   };
 
+  const isAbsent = (marks) => marks.remarks === "absent";
+
+  const hasScore = (marks) => typeof marks.OM === "number" && typeof marks.FM === "number";
+
   // Calculate overall totals
   const calculateOverallTotals = () => {
     let totalObtained = 0;
     let totalFull = 0;
     Object.values(course.exams).forEach((marks) => {
+      if (isAbsent(marks) || !hasScore(marks)) return;
+
       totalObtained += marks.OM;
       totalFull += marks.FM;
     });
@@ -40,7 +45,10 @@ export default function MarksCard({ course }) {
 
       <div className="space-y-2 sm:space-y-3">
         {Object.entries(course.exams).map(([examName, marks]) => {
-          const percentage = (marks.OM / marks.FM) * 100;
+          const absent = isAbsent(marks);
+          const scored = hasScore(marks);
+          const percentage = scored ? (marks.OM / marks.FM) * 100 : 0;
+
           return (
             <div key={examName}>
               <div className="flex items-center gap-2 sm:gap-4">
@@ -53,11 +61,13 @@ export default function MarksCard({ course }) {
                 </div>
                 <div className="w-[100px] sm:w-[120px] flex-shrink-0 text-right tabular-nums">
                   <span className="text-xs sm:text-sm text-muted-foreground">
-                    {marks.OM}/{marks.FM}
+                    {absent ? "Absent" : scored ? `${marks.OM}/${marks.FM}` : "--"}
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground/70 ml-2">
-                    {percentage.toFixed(1)}%
-                  </span>
+                  {!absent && scored && (
+                    <span className="text-xs sm:text-sm text-muted-foreground/70 ml-2">
+                      {percentage.toFixed(1)}%
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
