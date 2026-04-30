@@ -7,21 +7,27 @@ jobs:
     permissions:
       contents: read
       deployments: write
+
+    defaults:
+      run:
+        working-directory: jportal
+
     steps:
-      - uses: actions/checkout@v6
-      - run: cd jportal
+      - uses: actions/checkout@v4
+
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: jportal/package-lock.json
 
-      - run: npm install
+      - run: npm ci
       - run: npm run build
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=jportal
+          command: pages deploy jportal/dist --project-name=jportal
