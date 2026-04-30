@@ -7,7 +7,7 @@ import fs from "fs";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), "");
 
   return {
     base: "/jportal/",
@@ -25,7 +25,8 @@ export default defineConfig(({ mode }) => {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,whl}"],
           runtimeCaching: [
             {
-              urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/pyodide\/v0\.23\.4\/full\/pyodide\.js$/,
+              urlPattern:
+                /^https:\/\/cdn\.jsdelivr\.net\/pyodide\/v0\.23\.4\/full\/pyodide\.js$/,
               handler: "CacheFirst",
               options: {
                 cacheName: "pyodide-cache",
@@ -36,15 +37,25 @@ export default defineConfig(({ mode }) => {
             },
           ],
           additionalManifestEntries: [
-            { url: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js", revision: null },
-            { url: "/jportal/artifact/jiit_marks-0.2.0-py3-none-any.whl", revision: null },
-            { url: "/jportal/artifact/PyMuPDF-1.24.12-cp311-abi3-emscripten_3_1_32_wasm32.whl", revision: null },
+            {
+              url: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js",
+              revision: null,
+            },
+            {
+              url: "/jportal/artifact/jiit_marks-0.2.0-py3-none-any.whl",
+              revision: null,
+            },
+            {
+              url: "/jportal/artifact/PyMuPDF-1.24.12-cp311-abi3-emscripten_3_1_32_wasm32.whl",
+              revision: null,
+            },
           ],
         },
         manifest: {
           name: "JPortal",
           short_name: "JPortal",
-          description: "A web portal for students to view attendance and grades.",
+          description:
+            "A web portal for students to view attendance and grades.",
           start_url: "/jportal/",
           display: "standalone",
           background_color: "#191c20",
