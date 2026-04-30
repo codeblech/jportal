@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    base: "/jportal/",
+    base: "/",
     plugins: [
       react(),
       svgr(),
@@ -56,7 +56,7 @@ export default defineConfig(({ mode }) => {
           short_name: "JPortal",
           description:
             "A web portal for students to view attendance and grades.",
-          start_url: "/jportal/",
+          start_url: "/",
           display: "standalone",
           background_color: "#191c20",
           theme_color: "#191c20",
