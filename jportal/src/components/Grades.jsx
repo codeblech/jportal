@@ -9,7 +9,7 @@ import { Download, ListFilter, SortAsc, SortDesc, Play, X, Info } from "lucide-r
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
-import { generate_local_name, API } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.26/dist/jsjiit.esm.js";
+import { generate_local_name } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.26/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -66,7 +66,20 @@ export default function Grades({
         setGradesData(data);
 
         // Fetch speculative semesters (n+1, n+2) if available
-        const actualSemesters = data.semesterList;
+        const actualSemesters = (data.semesterList || []).map((s) => ({
+          ...s,
+          stynumber: Number(s.stynumber),
+          sgpa: Number(s.sgpa),
+          cgpa: Number(s.cgpa),
+          earnedgradepoints: Number(s.earnedgradepoints),
+          totalcoursecredit: Number(s.totalcoursecredit),
+        }));
+
+        if (actualSemesters.length === 0) {
+          setGradesError("Grade sheet is not available");
+          return;
+        }
+
         const latestSemester = actualSemesters[actualSemesters.length - 1];
         const n = latestSemester?.stynumber || 0;
 
@@ -76,42 +89,83 @@ export default function Grades({
           : 0;
 
         const speculativeSemesters = [];
+        const calculateRegisteredCredits = (subjects) => {
+          const subjectCredits = new Map();
+
+          for (const subject of subjects || []) {
+            if (subject.audtsubject === "Y" || subject.auditsubject === "Y") continue;
+
+            const code = subject.subject_code || subject.subjectcode || subject.subjectid;
+            const credits = Number(subject.credits || subject.coursecreditpoint || 0);
+
+            if (code && credits > 0) {
+              subjectCredits.set(code, Math.max(subjectCredits.get(code) || 0, credits));
+            }
+          }
+
+          return Array.from(subjectCredits.values()).reduce((sum, credits) => sum + credits, 0);
+        };
+
+        const addSpeculativeSemester = (semNumber, totalCredits) => {
+          const normalizedSemNumber = Number(semNumber);
+          const normalizedCredits = Number(totalCredits);
+
+          if (
+            !Number.isFinite(normalizedSemNumber) ||
+            !Number.isFinite(normalizedCredits) ||
+            normalizedCredits <= 0 ||
+            (normalizedSemNumber !== n + 1 && normalizedSemNumber !== n + 2) ||
+            actualSemesters.some((sem) => sem.stynumber === normalizedSemNumber) ||
+            speculativeSemesters.some((sem) => sem.stynumber === normalizedSemNumber)
+          ) {
+            return;
+          }
+
+          speculativeSemesters.push({
+            stynumber: normalizedSemNumber,
+            sgpa: averageSGPA,
+            cgpa: latestSemester.cgpa,
+            earnedgradepoints: averageSGPA * normalizedCredits,
+            totalcoursecredit: normalizedCredits,
+            isSpeculative: true,
+          });
+        };
 
         // Try to fetch subject choices for n+1 and n+2
         try {
           const registeredSemesters = await w.get_registered_semesters();
 
-          for (const regSem of registeredSemesters) {
+          for (const [index, regSem] of registeredSemesters.entries()) {
+            let semNumber = null;
+            let totalCredits = 0;
+
             try {
               const choices = await w.get_subject_choices(regSem);
 
               // Check if this is a future semester by examining stynumber
               if (choices?.subjectpreferencegrid?.length > 0) {
-                const semNumber = choices.subjectpreferencegrid[0].stynumber;
-
-                // Only add if it's n+1 or n+2
-                if (semNumber === n + 1 || semNumber === n + 2) {
-                  // Calculate total credits from allotted subjects
-                  const allottedSubjects = choices.subjectpreferencegrid.filter(s => s.running === "Y");
-                  const totalCredits = allottedSubjects.reduce((sum, s) => sum + (s.credits || 0), 0);
-
-                  // Only add if we have credits
-                  if (totalCredits > 0) {
-                    speculativeSemesters.push({
-                      stynumber: semNumber,
-                      sgpa: averageSGPA,
-                      cgpa: latestSemester.cgpa, // Will be recalculated
-                      earnedgradepoints: averageSGPA * totalCredits,
-                      totalcoursecredit: totalCredits,
-                      isSpeculative: true
-                    });
-                  }
-                }
+                semNumber = choices.subjectpreferencegrid[0].stynumber;
+                totalCredits = calculateRegisteredCredits(choices.subjectpreferencegrid.filter(s => s.running === "Y"));
               }
-            } catch (err) {
-              // Silently skip if subject choices not available
-              continue;
+            } catch {
+              // Fall back to registered subjects below if choices are not available.
             }
+
+            if (totalCredits <= 0) {
+              try {
+                const registrations = await w.get_registered_subjects_and_faculties(regSem);
+                totalCredits = Number(registrations?.total_credits) || calculateRegisteredCredits(registrations?.subjects);
+
+                // Registered subjects do not expose stynumber in jsjiit; the first entry is the latest/current semester.
+                if (!semNumber && index === 0) {
+                  semNumber = n + 1;
+                }
+              } catch {
+                // Silently skip if registered subjects are not available.
+              }
+            }
+
+            addSpeculativeSemester(semNumber, totalCredits);
           }
         } catch (err) {
           console.error("Failed to fetch speculative semesters:", err);
@@ -120,14 +174,6 @@ export default function Grades({
         // Sort speculative semesters by stynumber and merge with actual data
         speculativeSemesters.sort((a, b) => a.stynumber - b.stynumber);
         let mergedSemesters = [...actualSemesters, ...speculativeSemesters];
-
-        mergedSemesters = mergedSemesters.map((s) => ({
-          ...s,
-          sgpa: Number(s.sgpa),
-          cgpa: Number(s.cgpa),
-          earnedgradepoints: Number(s.earnedgradepoints),
-          totalcoursecredit: Number(s.totalcoursecredit),
-        }));
         // Recalculate CGPA for speculative semesters based on cumulative grade points
         if (speculativeSemesters.length > 0) {
           let totalGradePoints = actualSemesters.reduce((sum, sem) => sum + sem.earnedgradepoints, 0);
