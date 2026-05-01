@@ -8,9 +8,12 @@ import fs from "fs";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
+  const configuredBase = env.VITE_APP_BASE_PATH || "/";
+  const base = configuredBase.endsWith("/") ? configuredBase : `${configuredBase}/`;
+  const artifactBase = `${base}artifact`;
 
   return {
-    base: "/",
+    base,
     plugins: [
       react(),
       svgr(),
@@ -42,11 +45,11 @@ export default defineConfig(({ mode }) => {
               revision: null,
             },
             {
-              url: "/jportal/artifact/jiit_marks-0.2.0-py3-none-any.whl",
+              url: `${artifactBase}/jiit_marks-0.2.0-py3-none-any.whl`,
               revision: null,
             },
             {
-              url: "/jportal/artifact/PyMuPDF-1.24.12-cp311-abi3-emscripten_3_1_32_wasm32.whl",
+              url: `${artifactBase}/PyMuPDF-1.24.12-cp311-abi3-emscripten_3_1_32_wasm32.whl`,
               revision: null,
             },
           ],
@@ -56,7 +59,7 @@ export default defineConfig(({ mode }) => {
           short_name: "JPortal",
           description:
             "A web portal for students to view attendance and grades.",
-          start_url: "/",
+          start_url: base,
           display: "standalone",
           background_color: "#191c20",
           theme_color: "#191c20",

@@ -1,4 +1,7 @@
-on: [push]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -23,7 +26,7 @@ jobs:
           cache-dependency-path: jportal/package-lock.json
 
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:cf
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

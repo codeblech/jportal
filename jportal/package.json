@@ -7,9 +7,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:gh": "VITE_APP_BASE_PATH=/jportal/ vite build",
+    "build:cf": "VITE_APP_BASE_PATH=/ vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:gh",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -63,7 +65,7 @@
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
     "vite": "^7.3.1",
-    "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-pwa": "^0.19.8",
     "vite-plugin-svgr": "^4.5.0"
   }
 }

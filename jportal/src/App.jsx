@@ -369,7 +369,7 @@ function App() {
               },
             }}
           />
-          <Router>
+          <Router basename={import.meta.env.BASE_URL}>
             <div className="min-h-screen bg-background select-none">
               <Routes>
                 {/* Public route - accessible without authentication */}
