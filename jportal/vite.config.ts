@@ -89,6 +89,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // Vite 7 can miss the older package entry metadata here, so pin the ESM build explicitly.
+        "lucide-react": path.resolve(__dirname, "./node_modules/lucide-react/dist/esm/lucide-react.js"),
       },
     },
     server: {
