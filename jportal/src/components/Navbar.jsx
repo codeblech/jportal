@@ -4,8 +4,11 @@ import GradesIcon from "@/../public/icons/grades.svg?react";
 import ExamsIcon from "@/../public/icons/exams.svg?react";
 import SubjectsIcon from "@/../public/icons/subjects1.svg?react";
 import ProfileIcon from "@/../public/icons/profile.svg?react";
+import { useHaptics } from "@/hooks/useHaptics";
 
 function Navbar() {
+  const haptics = useHaptics();
+
   const navItems = [
     { name: "ATTENDANCE", path: "/attendance", IconComponent: AttendanceIcon },
     { name: "  GRADES  ", path: "/grades", IconComponent: GradesIcon },
@@ -20,6 +23,7 @@ function Navbar() {
         <NavLink
           key={item.name}
           to={item.path}
+          onClick={() => haptics.tap()}
           className={({ isActive }) => `
             flex-1 text-md text-muted-foreground data-[state=active]:bg-background data-[state=active]:text-foreground text-clip overflow-hidden whitespace-nowrap
             ${isActive ? "opacity-100" : "opacity-70"}

@@ -2,6 +2,7 @@ import { defaultPresets } from "../utils/theme-presets";
 import { useThemeStore } from "../stores/theme-store";
 import { Button } from "./ui/button";
 import { cn } from "../lib/utils";
+import { useHaptics } from "../hooks/useHaptics";
 
 interface ThemeSelectorProps {
   className?: string;
@@ -9,11 +10,13 @@ interface ThemeSelectorProps {
 
 export function ThemeSelector({ className }: ThemeSelectorProps) {
   const { themeState, setThemeState } = useThemeStore();
+  const haptics = useHaptics();
 
   const handleThemeSelect = (presetKey: string) => {
     const preset = defaultPresets[presetKey];
     if (!preset) return;
 
+    haptics.success();
     setThemeState({
       ...themeState,
       preset: presetKey,
