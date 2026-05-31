@@ -5,11 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import GradeCard from "./GradeCard";
 import InteractiveGPAChart from "./InteractiveGPAChart";
 import { Button } from "@/components/ui/button";
-import { Download, ListFilter, SortAsc, SortDesc, Play, X, Info } from "lucide-react";
+import { Download, ListFilter, SortAsc, SortDesc, Play, X, Info, TriangleAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonGroup } from "@/components/ui/button-group";
 import MarksCard from "./MarksCard";
-import { generate_local_name } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.26/dist/jsjiit.esm.js";
+import { generate_local_name } from "https://cdn.jsdelivr.net/npm/jsjiit@0.0.27/dist/jsjiit.esm.js";
 import MockWebPortal from "./MockWebPortal";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -482,6 +482,8 @@ export default function Grades({
     }
   };
 
+  const isSelectedGradeCardIncomplete = Reflect.get(selectedGradeCardSem || {}, "is_grade_card_complete") === false;
+
   if (gradesLoading) {
     return (
       <div className="text-foreground flex items-center justify-center py-4 h-[calc(100vh_-_<header_height>-<navbar_height>)]">
@@ -724,6 +726,15 @@ export default function Grades({
                     </Button>
                   </ButtonGroup>
                 </div>
+
+                {isSelectedGradeCardIncomplete && (
+                  <div className="mb-4 flex items-start gap-2 rounded-md border border-yellow-500/40 bg-yellow-500/10 px-3 py-2 text-sm text-yellow-700 dark:text-yellow-300">
+                    <TriangleAlert className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                    <span>
+                      Please note: this semester's full grade card is not yet realeased officially. The grade card is partial.
+                    </span>
+                  </div>
+                )}
 
                 {gradeCardLoading ? (
                   <div className="text-foreground flex items-center justify-center py-4">Loading subjects...</div>
