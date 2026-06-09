@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import SubjectInfoCard from "./SubjectInfoCard";
 import {
   Select,
@@ -28,113 +28,137 @@ export default function Subjects({
   choicesLoading,
   setChoicesLoading
 }) {
+  const displayedSemesters = activeTab === "choices"
+    ? semestersData?.choice_semesters
+    : semestersData?.registered_semesters || semestersData?.semesters;
 
   useEffect(() => {
-    const fetchSemesters = async () => {
-      if (semestersData) {
-        if (semestersData.semesters.length > 0 && !selectedSem) {
-          setSelectedSem(semestersData.latest_semester);
+    let cancelled = false;
 
-          if (!subjectData?.[semestersData.latest_semester.registration_id]) {
-            const data = await w.get_registered_subjects_and_faculties(semestersData.latest_semester);
-            setSubjectData(prev => ({
-              ...prev,
-              [semestersData.latest_semester.registration_id]: data
-            }));
-          }
+    const fetchSubjectsForTab = async () => {
+      const isChoicesTab = activeTab === "choices";
 
-          // Fetch subject choices for latest semester
-          if (!subjectChoices?.[semestersData.latest_semester.registration_id]) {
-            try {
-              setChoicesLoading(true);
-              const choicesData = await w.get_subject_choices(semestersData.latest_semester);
-              setSubjectChoices(prev => ({
-                ...prev,
-                [semestersData.latest_semester.registration_id]: choicesData
-              }));
-            } catch (err) {
-              console.error("Error fetching subject choices:", err);
-            } finally {
-              setChoicesLoading(false);
-            }
-          }
-        }
-        return;
-      }
-
-      setLoading(true);
-      setSubjectsLoading(true);
-      setChoicesLoading(true);
       try {
-        const registeredSems = await w.get_registered_semesters();
-        const latestSem = registeredSems[0];
+        let semesterList = isChoicesTab
+          ? semestersData?.choice_semesters
+          : semestersData?.registered_semesters || semestersData?.semesters;
 
-        setSemestersData({
-          semesters: registeredSems,
-          latest_semester: latestSem
-        });
+        if (!semesterList) {
+          setLoading(true);
+          semesterList = isChoicesTab && w.get_semesters_for_grade_card
+            ? await w.get_semesters_for_grade_card()
+            : await w.get_registered_semesters();
 
-        setSelectedSem(latestSem);
+          if (cancelled) return;
 
-        if (!subjectData?.[latestSem.registration_id]) {
-          const data = await w.get_registered_subjects_and_faculties(latestSem);
-          setSubjectData(prev => ({
+          setSemestersData(prev => ({
             ...prev,
-            [latestSem.registration_id]: data
+            semesters: prev?.semesters || (!isChoicesTab ? semesterList : undefined),
+            latest_semester: prev?.latest_semester || (!isChoicesTab ? semesterList[0] : undefined),
+            registered_semesters: !isChoicesTab ? semesterList : prev?.registered_semesters,
+            latest_registered_semester: !isChoicesTab ? semesterList[0] : prev?.latest_registered_semester,
+            choice_semesters: isChoicesTab ? semesterList : prev?.choice_semesters,
+            latest_choice_semester: isChoicesTab ? semesterList[0] : prev?.latest_choice_semester,
           }));
         }
 
-        // Fetch subject choices for latest semester
-        if (!subjectChoices?.[latestSem.registration_id]) {
-          try {
-            const choicesData = await w.get_subject_choices(latestSem);
+        const selectedInTab = semesterList?.find(sem => sem.registration_id === selectedSem?.registration_id);
+        const semester = selectedInTab || semesterList?.[0];
+
+        if (!semester) return;
+
+        if (!selectedInTab) {
+          setSelectedSem(semester);
+        }
+
+        if (isChoicesTab) {
+          if (!subjectChoices?.[semester.registration_id]) {
+            setChoicesLoading(true);
+            const choicesData = await w.get_subject_choices(semester);
+            if (cancelled) return;
             setSubjectChoices(prev => ({
               ...prev,
-              [latestSem.registration_id]: choicesData
+              [semester.registration_id]: choicesData
+            }));
+          }
+        } else if (!subjectData?.[semester.registration_id]) {
+          setSubjectsLoading(true);
+          const data = await w.get_registered_subjects_and_faculties(semester);
+          if (cancelled) return;
+          setSubjectData(prev => ({
+            ...prev,
+            [semester.registration_id]: data
+          }));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setSubjectsLoading(false);
+          setChoicesLoading(false);
+        }
+      }
+    };
+
+    fetchSubjectsForTab();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    w,
+    activeTab,
+    semestersData,
+    selectedSem,
+    subjectData,
+    subjectChoices,
+    setLoading,
+    setSubjectsLoading,
+    setChoicesLoading,
+    setSelectedSem,
+    setSemestersData,
+    setSubjectData,
+    setSubjectChoices,
+  ]);
+
+  const handleSemesterChange = async (value) => {
+    const isChoicesTab = activeTab === "choices";
+
+    if (isChoicesTab) {
+      setChoicesLoading(true);
+    } else {
+      setSubjectsLoading(true);
+    }
+
+    try {
+      const semester = displayedSemesters?.find(sem => sem.registration_id === value);
+
+      if (!semester) return;
+
+      setSelectedSem(semester);
+
+      if (isChoicesTab) {
+        if (!subjectChoices?.[semester.registration_id]) {
+          try {
+            const choicesData = await w.get_subject_choices(semester);
+            setSubjectChoices(prev => ({
+              ...prev,
+              [semester.registration_id]: choicesData
             }));
           } catch (err) {
             console.error("Error fetching subject choices:", err);
           }
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-        setSubjectsLoading(false);
-        setChoicesLoading(false);
+        return;
       }
-    };
 
-    fetchSemesters();
-  }, [w, setSubjectData, semestersData, setSemestersData]);
-
-  const handleSemesterChange = async (value) => {
-    setSubjectsLoading(true);
-    setChoicesLoading(true);
-    try {
-      const semester = semestersData?.semesters?.find(sem => sem.registration_id === value);
-      setSelectedSem(semester);
-
-      // Fetch registered subjects if not cached
       if (!subjectData?.[semester.registration_id]) {
         const data = await w.get_registered_subjects_and_faculties(semester);
         setSubjectData(prev => ({
           ...prev,
           [semester.registration_id]: data
         }));
-      }
-
-      // Fetch subject choices if not cached
-      if (!subjectChoices?.[semester.registration_id]) {
-        try {
-          const choicesData = await w.get_subject_choices(semester);
-          setSubjectChoices(prev => ({
-            ...prev,
-            [semester.registration_id]: choicesData
-          }));
-        } catch (err) {
-          console.error("Error fetching subject choices:", err);
-        }
       }
     } catch (err) {
       console.error(err);
@@ -175,7 +199,7 @@ export default function Subjects({
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="bg-background text-foreground border-foreground">
-              {semestersData?.semesters?.map((sem) => (
+              {displayedSemesters?.map((sem) => (
                 <SelectItem key={sem.registration_id} value={sem.registration_id}>
                   {sem.registration_code}
                 </SelectItem>
