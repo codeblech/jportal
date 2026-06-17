@@ -3,7 +3,10 @@ const CLOUDFLARE_BASE_URL = import.meta.env.DEV
   : import.meta.env.VITE_CLOUDFLARE_PROXY_URL;
 /* Cloudflare gives CORS errors if the BASE_URL is used directly, hence a proxy is setup */
 
-const CLOUDFLARE_API_TOKEN = import.meta.env.VITE_CLOUDFLARE_API_TOKEN;
+// New method use pages functions n secrets, this is not req now:
+//const CLOUDFLARE_API_TOKEN = import.meta.env.VITE_CLOUDFLARE_API_TOKEN;
+//
+const ANALYTICS_API = "/api/analytics";
 
 export async function fetchWebAnalyticsAggregate(from: Date, to: Date) {
   const query: string = `query GetRumPageloadEvents(
@@ -28,24 +31,29 @@ export async function fetchWebAnalyticsAggregate(from: Date, to: Date) {
     }
   }`;
 
-  const variables = {
-    accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-    siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-    from: from.toISOString(),
-    to: to.toISOString(),
-  };
+  //   const variables = {
+  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
+  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
+  //     from: from.toISOString(),
+  //     to: to.toISOString(),
+  //   };
+  //
+  //   const headers: HeadersInit = {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+  //   };
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  };
-
-  const response = await fetch(CLOUDFLARE_BASE_URL, {
+  const response = await fetch(ANALYTICS_API, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        from: from.toISOString(),
+        to: to.toISOString(),
+      },
     }),
   });
 
@@ -56,7 +64,8 @@ export async function fetchWebAnalyticsAggregate(from: Date, to: Date) {
   const result = await response.json();
 
   // Extract and transform the data
-  const groups = result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups?.[0];
+  const groups =
+    result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups?.[0];
 
   if (!groups) {
     return {
@@ -99,24 +108,29 @@ export async function fetchWebAnalyticsBrowser(from: Date, to: Date) {
     }
   }`;
 
-  const variables = {
-    accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-    siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-    from: from.toISOString(),
-    to: to.toISOString(),
-  };
+  //   const variables = {
+  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
+  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
+  //     from: from.toISOString(),
+  //     to: to.toISOString(),
+  //   };
+  //
+  //   const headers: HeadersInit = {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+  //   };
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  };
-
-  const response = await fetch(CLOUDFLARE_BASE_URL, {
+  const response = await fetch(ANALYTICS_API, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        from: from.toISOString(),
+        to: to.toISOString(),
+      },
     }),
   });
 
@@ -127,7 +141,8 @@ export async function fetchWebAnalyticsBrowser(from: Date, to: Date) {
   const result = await response.json();
 
   // Extract and transform the data
-  const groups = result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
+  const groups =
+    result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
 
   if (!groups || groups.length === 0) {
     return [];
@@ -166,24 +181,29 @@ export async function fetchWebAnalyticsOS(from: Date, to: Date) {
     }
   }`;
 
-  const variables = {
-    accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-    siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-    from: from.toISOString(),
-    to: to.toISOString(),
-  };
+  //   const variables = {
+  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
+  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
+  //     from: from.toISOString(),
+  //     to: to.toISOString(),
+  //   };
+  //
+  //   const headers: HeadersInit = {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+  //   };
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  };
-
-  const response = await fetch(CLOUDFLARE_BASE_URL, {
+  const response = await fetch(ANALYTICS_API, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        from: from.toISOString(),
+        to: to.toISOString(),
+      },
     }),
   });
 
@@ -194,7 +214,8 @@ export async function fetchWebAnalyticsOS(from: Date, to: Date) {
   const result = await response.json();
 
   // Extract and transform the data
-  const groups = result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
+  const groups =
+    result?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
 
   if (!groups || groups.length === 0) {
     return [];
@@ -249,7 +270,10 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
 
   // Calculate previous period for delta
   const prevFrom = new Date(from);
-  prevFrom.setDate(prevFrom.getDate() - (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+  prevFrom.setDate(
+    prevFrom.getDate() -
+      (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24),
+  );
   const prevFromISO = prevFrom.toISOString();
 
   const filterBase = {
@@ -291,7 +315,6 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
   };
 
   const variables = {
-    accountTag: import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG,
     filter: filterBase,
     visitsFilter: filterBase,
     pageviewsFilter: filterBase,
@@ -307,7 +330,7 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+    //Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
   };
 
   const response = await fetch(CLOUDFLARE_BASE_URL, {
@@ -320,7 +343,9 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
   });
 
   if (!response.ok) {
-    throw new Error(`Error fetching web analytics sparkline: ${response.statusText}`);
+    throw new Error(
+      `Error fetching web analytics sparkline: ${response.statusText}`,
+    );
   }
 
   const result = await response.json();
@@ -341,7 +366,10 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
       timestamp: item.dimensions.ts,
       visits: item.sum.visits,
     }))
-    .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    );
 
   // Transform pageviews data
   const pageviews = (accounts.pageviews || [])
@@ -350,7 +378,10 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
       timestamp: item.dimensions.ts,
       pageviews: item.count,
     }))
-    .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    );
 
   return {
     visits,
