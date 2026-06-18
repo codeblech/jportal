@@ -1,10 +1,4 @@
-const CLOUDFLARE_BASE_URL = import.meta.env.DEV
-  ? "/api/cloudflare/client/v4/graphql"
-  : import.meta.env.VITE_CLOUDFLARE_PROXY_URL;
-/* Cloudflare gives CORS errors if the BASE_URL is used directly, hence a proxy is setup */
-
-// New method use pages functions n secrets, this is not req now:
-//const CLOUDFLARE_API_TOKEN = import.meta.env.VITE_CLOUDFLARE_API_TOKEN;
+// New method use pages functions n secrets, old VITE vars are not req now
 //
 const ANALYTICS_API = "/api/analytics";
 
@@ -30,18 +24,6 @@ export async function fetchWebAnalyticsAggregate(from: Date, to: Date) {
       }
     }
   }`;
-
-  //   const variables = {
-  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-  //     from: from.toISOString(),
-  //     to: to.toISOString(),
-  //   };
-  //
-  //   const headers: HeadersInit = {
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  //   };
 
   const response = await fetch(ANALYTICS_API, {
     method: "POST",
@@ -108,18 +90,6 @@ export async function fetchWebAnalyticsBrowser(from: Date, to: Date) {
     }
   }`;
 
-  //   const variables = {
-  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-  //     from: from.toISOString(),
-  //     to: to.toISOString(),
-  //   };
-  //
-  //   const headers: HeadersInit = {
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  //   };
-
   const response = await fetch(ANALYTICS_API, {
     method: "POST",
     headers: {
@@ -180,18 +150,6 @@ export async function fetchWebAnalyticsOS(from: Date, to: Date) {
       }
     }
   }`;
-
-  //   const variables = {
-  //     accountTag: `${import.meta.env.VITE_CLOUDFLARE_ACCOUNT_TAG}`,
-  //     siteTag: `${import.meta.env.VITE_CLOUDFLARE_SITE_TAG}`,
-  //     from: from.toISOString(),
-  //     to: to.toISOString(),
-  //   };
-  //
-  //   const headers: HeadersInit = {
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  //   };
 
   const response = await fetch(ANALYTICS_API, {
     method: "POST",
@@ -282,13 +240,7 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
         datetime_geq: fromISO,
         datetime_leq: toISO,
       },
-      {
-        OR: [
-          {
-            siteTag: import.meta.env.VITE_CLOUDFLARE_SITE_TAG,
-          },
-        ],
-      },
+      { OR: [{ siteTag: "__CLOUDFLARE_SITE_TAG__" }] },
       {
         bot: 0,
       },
@@ -301,13 +253,7 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
         datetime_geq: prevFromISO,
         datetime_leq: fromISO,
       },
-      {
-        OR: [
-          {
-            siteTag: import.meta.env.VITE_CLOUDFLARE_SITE_TAG,
-          },
-        ],
-      },
+      { OR: [{ siteTag: "__CLOUDFLARE_SITE_TAG__" }] },
       {
         bot: 0,
       },
@@ -328,14 +274,11 @@ export async function fetchWebAnalyticsSparkline(from: Date, to: Date) {
     inpFilter: filterBase,
   };
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    //Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-  };
-
-  const response = await fetch(CLOUDFLARE_BASE_URL, {
+  const response = await fetch(ANALYTICS_API, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       query,
       variables,
